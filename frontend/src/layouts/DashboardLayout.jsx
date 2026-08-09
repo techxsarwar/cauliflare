@@ -82,7 +82,7 @@ const DashboardLayoutContent = () => {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <div style={{ flex: 1, marginLeft: '260px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, marginLeft: '260px', display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
         
         {/* TOPBAR */}
         <header style={{
