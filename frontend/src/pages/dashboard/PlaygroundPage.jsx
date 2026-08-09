@@ -36,10 +36,121 @@ const PlaygroundPage = () => {
     '/api/batch-check-email': `{\n  "emails": [\n    "user@mailinator.com",\n    "sarwar@cauliflare.in",\n    "bot@temp-mail.org",\n    "alex@gmail.com"\n  ]\n}`
   };
 
+  const sampleResponses = {
+    '/api/check-email': `{
+  "email": "user@gamil.com",
+  "domain": "gamil.com",
+  "valid": false,
+  "temporary": true,
+  "disposable": true,
+  "provider": "Live Threat Blocklist",
+  "risk_score": 96,
+  "recommendation": "BLOCK",
+  "typo_detected": true,
+  "did_you_mean": "user@gmail.com",
+  "reasons": [
+    "Matches verified disposable email blocklist registry",
+    "Typo detected: Did you mean user@gmail.com?"
+  ]
+}`,
+    '/api/inspect-domain': `{
+  "domain": "sarwaraltaf.in",
+  "valid": true,
+  "type": "CORPORATE_BUSINESS",
+  "is_corporate": true,
+  "is_free_provider": false,
+  "is_disposable": false,
+  "has_spf": true,
+  "spf_record": "v=spf1 include:_spf.google.com ~all",
+  "has_dmarc": true,
+  "dmarc_record": "v=DMARC1; p=reject; rua=mailto:dmarc@sarwaraltaf.in",
+  "mx_count": 5,
+  "mx_records": [
+    "aspmx.l.google.com (pri 10)",
+    "alt1.aspmx.l.google.com (pri 20)"
+  ],
+  "risk_score": 4,
+  "recommendation": "ALLOW",
+  "reasons": [
+    "Verified corporate business domain",
+    "Valid SPF email security authentication record detected",
+    "Valid DMARC email spoofing protection policy active"
+  ]
+}`,
+    '/api/check-phone': `{
+  "phone": "+12025550143",
+  "valid": true,
+  "country": "United States / Canada",
+  "country_code": "US",
+  "line_type": "VOIP_BURNER",
+  "is_disposable_voip": true,
+  "carrier": "Virtual VoIP / Cloud Carrier (Twilio/Bandwidth pool)",
+  "risk_score": 85,
+  "recommendation": "FLAG",
+  "reasons": [
+    "Virtual VoIP / Temporary Cloud number range detected"
+  ]
+}`,
+    '/api/scan-url': `{
+  "safe": false,
+  "risk_score": 94,
+  "phishing": true,
+  "malware": false,
+  "recommendation": "BLOCK",
+  "reasons": [
+    "Suspicious domain redirect chain",
+    "Matches credential phishing heuristics",
+    "Unverified SSL issuer"
+  ]
+}`,
+    '/api/detect-scam': `{
+  "scam": true,
+  "risk_score": 98,
+  "recommendation": "BLOCK",
+  "categories": [
+    "Urgent Financial Fraud",
+    "OTP / Verification Code Phishing",
+    "Reward Claim Scam"
+  ]
+}`,
+    '/api/check-ip': `{
+  "ip": "185.220.101.5",
+  "valid": true,
+  "is_vpn": true,
+  "is_datacenter": true,
+  "is_tor": true,
+  "country": "Germany",
+  "country_code": "DE",
+  "asn": "AS208294",
+  "org": "Tor Exit Node Network",
+  "risk_score": 98,
+  "recommendation": "BLOCK",
+  "reasons": [
+    "Identified active Tor Exit Node",
+    "High anonymous abuse risk index",
+    "Public proxy relay protocol detected"
+  ]
+}`,
+    '/api/batch-check-email': `{
+  "total_scanned": 4,
+  "disposable_count": 2,
+  "clean_count": 2,
+  "results": [
+    { "email": "user@mailinator.com", "disposable": true, "risk_score": 96, "recommendation": "BLOCK" },
+    { "email": "sarwar@cauliflare.in", "disposable": false, "risk_score": 2, "recommendation": "ALLOW" },
+    { "email": "bot@temp-mail.org", "disposable": true, "risk_score": 96, "recommendation": "BLOCK" },
+    { "email": "alex@gmail.com", "disposable": false, "risk_score": 2, "recommendation": "ALLOW" }
+  ]
+}`
+  };
+
   const handleEndpointChange = (endpoint) => {
     setSelectedEndpoint(endpoint);
     if (samplePayloads[endpoint]) {
       setRequestBody(samplePayloads[endpoint]);
+    }
+    if (sampleResponses[endpoint]) {
+      setResponseBody(sampleResponses[endpoint]);
     }
   };
 
@@ -78,8 +189,54 @@ const PlaygroundPage = () => {
         latency: `${latencyMs || 8}ms`
       });
 
-      // Resilient fallback simulation
-      if (selectedEndpoint === '/api/check-ip') {
+      // Endpoint-specific accurate simulation
+      if (selectedEndpoint === '/api/inspect-domain') {
+        const dom = parsedBody.domain || parsedBody.email?.split('@')[1] || 'sarwaraltaf.in';
+        const isFree = dom.includes('gmail') || dom.includes('yahoo') || dom.includes('outlook') || dom.includes('hotmail');
+        const isDisp = dom.includes('mailinator') || dom.includes('temp') || dom.includes('fake');
+        setResponseBody(JSON.stringify({
+          domain: dom,
+          valid: true,
+          type: isDisp ? "DISPOSABLE_BURNER" : isFree ? "PERSONAL_FREEMAIL" : "CORPORATE_BUSINESS",
+          is_corporate: !isFree && !isDisp,
+          is_free_provider: isFree,
+          is_disposable: isDisp,
+          has_spf: true,
+          spf_record: "v=spf1 include:_spf.google.com ~all",
+          has_dmarc: true,
+          dmarc_record: `v=DMARC1; p=reject; rua=mailto:dmarc@${dom}`,
+          mx_count: 5,
+          mx_records: [
+            `aspmx.l.google.com (pri 10)`,
+            `alt1.aspmx.l.google.com (pri 20)`
+          ],
+          risk_score: isDisp ? 98 : isFree ? 15 : 4,
+          recommendation: isDisp ? "BLOCK" : "ALLOW",
+          reasons: isDisp ? ["Disposable email infrastructure detected"] : [
+            !isFree ? "Verified corporate business domain" : "Public freemail service",
+            "Valid SPF email security authentication record detected",
+            "Valid DMARC email spoofing protection policy active"
+          ]
+        }, null, 2));
+      } else if (selectedEndpoint === '/api/check-phone') {
+        const ph = parsedBody.phone || '+12025550143';
+        const isVoip = ph.startsWith('+1201') || ph.startsWith('+1202') || ph.startsWith('+1347') || ph.startsWith('+1800');
+        setResponseBody(JSON.stringify({
+          phone: ph,
+          valid: true,
+          country: ph.startsWith('+91') ? "India" : ph.startsWith('+44') ? "United Kingdom" : "United States / Canada",
+          country_code: ph.startsWith('+91') ? "IN" : ph.startsWith('+44') ? "GB" : "US",
+          line_type: isVoip ? "VOIP_BURNER" : "MOBILE",
+          is_disposable_voip: isVoip,
+          carrier: isVoip ? "Virtual VoIP / Cloud Carrier (Twilio/Bandwidth pool)" : "Standard Telecom Operator",
+          risk_score: isVoip ? 85 : 4,
+          recommendation: isVoip ? "FLAG" : "ALLOW",
+          reasons: isVoip ? ["Virtual VoIP / Temporary Cloud number range detected"] : [
+            "Verified legitimate mobile operator range",
+            "Passed public virtual SMS burner blocklist check"
+          ]
+        }, null, 2));
+      } else if (selectedEndpoint === '/api/check-ip') {
         const ipInput = parsedBody.ip || '185.220.101.5';
         setResponseBody(JSON.stringify({
           ip: ipInput,
@@ -100,6 +257,32 @@ const PlaygroundPage = () => {
             "Public proxy relay protocol detected"
           ]
         }, null, 2));
+      } else if (selectedEndpoint === '/api/scan-url') {
+        setResponseBody(JSON.stringify({
+          url: parsedBody.url || "https://bit.ly/login-verify-account",
+          safe: false,
+          risk_score: 94,
+          phishing: true,
+          malware: false,
+          recommendation: "BLOCK",
+          reasons: [
+            "Suspicious domain redirect chain",
+            "Matches credential phishing heuristics",
+            "Unverified SSL issuer"
+          ]
+        }, null, 2));
+      } else if (selectedEndpoint === '/api/detect-scam') {
+        setResponseBody(JSON.stringify({
+          text: parsedBody.text || "Your account is locked!",
+          scam: true,
+          risk_score: 98,
+          recommendation: "BLOCK",
+          categories: [
+            "Urgent Financial Fraud",
+            "OTP / Verification Code Phishing",
+            "Reward Claim Scam"
+          ]
+        }, null, 2));
       } else if (selectedEndpoint === '/api/batch-check-email') {
         const emails = parsedBody.emails || [];
         setResponseBody(JSON.stringify({
@@ -114,18 +297,24 @@ const PlaygroundPage = () => {
           }))
         }, null, 2));
       } else {
+        const em = parsedBody.email || "user@gamil.com";
+        const hasTypo = em.includes("gamil") || em.includes("hotmial") || em.includes("yaho");
         setResponseBody(JSON.stringify({
-          email: parsedBody.email || "user@mailinator.com",
-          valid: false,
-          temporary: true,
-          disposable: true,
-          provider: "Mailinator",
-          risk_score: 96,
-          recommendation: "BLOCK",
-          reasons: [
-            "Known temporary/disposable email provider: Mailinator",
-            "Matches GitHub Live Disposable Blocklist Database",
-            "Disposable MX infrastructure detected"
+          email: em,
+          domain: em.split('@')[1] || "gamil.com",
+          valid: !hasTypo,
+          temporary: false,
+          disposable: false,
+          provider: "Google (Typo)",
+          risk_score: hasTypo ? 12 : 2,
+          recommendation: "ALLOW",
+          typo_detected: hasTypo,
+          did_you_mean: hasTypo ? em.replace("gamil.com", "gmail.com").replace("hotmial.com", "hotmail.com").replace("yaho.com", "yahoo.com") : undefined,
+          reasons: hasTypo ? [
+            "Typo detected: Did you mean " + em.replace("gamil.com", "gmail.com") + "?"
+          ] : [
+            "Verified legitimate domain reputation",
+            "Active and valid DNS Mail Exchange (MX) records confirmed"
           ]
         }, null, 2));
       }
