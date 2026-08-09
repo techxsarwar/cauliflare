@@ -16,7 +16,7 @@ const Footer = () => {
           {/* STATUS INDICATOR */}
           <div style={{ marginTop: '32px', display: 'inline-flex', alignItems: 'center', gap: '12px', padding: '12px 16px', border: '2px solid var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
             <div className="dot dot-green" style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--primary)' }}></div>
-            <a href="https://status.cauliflare.in" className="font-label-caps" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 'bold' }}>All systems operational</a>
+            <Link to="/status" className="font-label-caps" style={{ color: 'var(--on-surface)', textDecoration: 'none', fontWeight: 'bold' }}>All systems operational</Link>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ const Footer = () => {
             <ul style={{ listStyle: 'none', padding: 0, marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <li><Link className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} to="/docs">Documentation</Link></li>
               <li><a className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} href="/docs#endpoints">API Reference</a></li>
-              <li><a className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} href="https://status.cauliflare.in">Status</a></li>
+              <li><Link className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} to="/status">Status</Link></li>
               <li><a className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} href="/docs#sdk-examples">SDKs</a></li>
               <li><a className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} href="https://github.com/techxsarwar/cauliflare">GitHub</a></li>
               <li><Link className="font-body-lg footer-link" style={{ textDecoration: 'none', color: 'var(--on-surface-variant)' }} to="/changelog">Changelog</Link></li>

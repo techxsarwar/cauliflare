@@ -123,10 +123,10 @@ const DashboardLayoutContent = () => {
               </svg> GITHUB REPO
             </a>
 
-            <a href="https://status.cauliflare.in" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', border: '2px solid var(--on-surface)', padding: '6px 12px', backgroundColor: 'var(--surface-container)' }}>
+            <Link to="/status" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', border: '2px solid var(--on-surface)', padding: '6px 12px', backgroundColor: 'var(--surface-container)' }}>
               <span style={{ width: '8px', height: '8px', backgroundColor: '#00ff00', borderRadius: '50%', boxShadow: '0 0 8px #00ff00' }}></span>
               <span className="font-label-caps" style={{ fontSize: '10px', fontWeight: 'bold' }}>ALL SYSTEMS OPERATIONAL</span>
-            </a>
+            </Link>
 
             <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <Bell size={20} className="text-on-surface" />

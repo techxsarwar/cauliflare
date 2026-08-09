@@ -168,7 +168,7 @@ const TopNavBar = () => {
                 <Link to="/docs">Documentation</Link>
                 <a href="/docs#endpoints">API Reference</a>
                 <a href="/docs#sdk-examples">SDKs</a>
-                <a href="https://status.cauliflare.in">Status</a>
+                <Link to="/status">Status</Link>
                 <a href="https://github.com/techxsarwar/cauliflare">GitHub</a>
                 <Link to="/changelog">Changelog</Link>
               </div>
@@ -199,9 +199,9 @@ const TopNavBar = () => {
         {/* RIGHT: ACTIONS */}
         <div className="nav-right font-label-caps">
           
-          <a href="https://status.cauliflare.in" className="status-indicator" style={{ textDecoration: 'none', color: 'inherit', border: 'none', background: 'transparent', padding: '8px' }} title="Systems Operational">
+          <Link to="/status" className="status-indicator" style={{ textDecoration: 'none', color: 'inherit', border: 'none', background: 'transparent', padding: '8px' }} title="Systems Operational">
             <span className="status-dot"></span>
-          </a>
+          </Link>
 
           <div style={{ cursor: 'pointer', padding: '8px', display: 'flex', alignItems: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--on-surface)" strokeWidth="3" strokeLinecap="square" strokeLinejoin="miter">

@@ -1,6 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+
+// Components
+import ScrollToTop from './components/ScrollToTop';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
@@ -16,6 +19,8 @@ import ApiDocsPage from './pages/ApiDocsPage';
 import GenericPage from './pages/GenericPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import SignInPage from './pages/SignInPage';
+import StatusPage from './pages/StatusPage';
+import TempMailProductPage from './pages/TempMailProductPage';
 
 // Dashboard Pages
 import DashboardIndex from './pages/dashboard/DashboardIndex';
@@ -26,11 +31,11 @@ import ThreatsPage from './pages/dashboard/ThreatsPage';
 import AnalyticsPage from './pages/dashboard/AnalyticsPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import BillingPage from './pages/dashboard/BillingPage';
-import TempMailProductPage from './pages/TempMailProductPage';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         
         {/* PUBLIC ROUTES */}
@@ -41,7 +46,11 @@ function App() {
           <Route path="/archive" element={<ArchivePage />} />
           <Route path="/editions" element={<EditionsPage />} />
           <Route path="/docs" element={<ApiDocsPage />} />
+          <Route path="/status" element={<StatusPage />} />
+          <Route path="/company/status" element={<StatusPage />} />
           <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignInPage />} />
+          <Route path="/login" element={<Navigate to="/sign-in" replace />} />
           
           {/* Products */}
           <Route path="/products/scam-detection" element={<GenericPage title="Scam Detection" tag="PRODUCT" description="Advanced scam detection API powered by AI." />} />
@@ -76,6 +85,9 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="billing" element={<BillingPage />} />
         </Route>
+
+        {/* Catch-all fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
     </Router>
