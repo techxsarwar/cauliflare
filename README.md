@@ -5,7 +5,7 @@
   <p><em>Engineered in Go & React for high-throughput internet platforms.</em></p>
 
   <p>
-    <a href="https://github.com/techxsarwar/cauliflare/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-black.svg?style=for-the-badge" alt="License" /></a>
+    <a href="https://github.com/techxsarwar/cauliflare/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg?style=for-the-badge" alt="License" /></a>
     <a href="https://cauliflare.vercel.app/status"><img src="https://img.shields.io/badge/Uptime-99.99%25-00e676?style=for-the-badge" alt="Uptime" /></a>
     <a href="https://cauliflare.vercel.app"><img src="https://img.shields.io/badge/Speed-%3C8ms%20Go%20Engine-blue?style=for-the-badge" alt="Speed" /></a>
     <a href="https://cauliflare.vercel.app"><img src="https://img.shields.io/badge/Signatures-75%2C000%2B%20Live-orange?style=for-the-badge" alt="Signatures" /></a>
@@ -165,8 +165,8 @@ npm run dev
 
 ## 📜 License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+Distributed under the **GNU General Public License v3.0 (GPL-3.0)**. Anyone is free to use, modify, and build upon this software provided all derivative works remain **open-source & public** with prominent attribution to **Sarwar**. See [LICENSE](LICENSE) for full details.
 
 <div align="center">
-  <sub>Built by Sarwar • Powered by Go, React, Clerk & Supabase</sub>
+  <sub>Designed & Developed by Sarwar • Powered by Go, React, Clerk & Supabase</sub>
 </div>
