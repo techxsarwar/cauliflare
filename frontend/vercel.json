@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://cauliflare-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "https://cauliflare-backend.onrender.com/v1/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

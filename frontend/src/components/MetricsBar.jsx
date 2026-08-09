@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../api';
 
 const MetricsBar = () => {
-  const [domainCount, setDomainCount] = useState(74000);
+  const [domainCount, setDomainCount] = useState(74697);
   const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
-    fetch('/api/metrics')
+    fetch(getApiUrl('/api/metrics'))
       .then(res => res.json())
       .then(data => {
         if (data.total_domains) {
