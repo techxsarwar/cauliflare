@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { SignedIn, SignedOut, UserButton } from "../clerk";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "../clerk";
 
 const TopNavBar = () => {
   return (
@@ -211,13 +211,22 @@ const TopNavBar = () => {
           </div>
 
           <SignedOut>
-            <Link to="/sign-in" className="nav-link" style={{ fontSize: '14px', marginLeft: '8px', marginRight: '8px' }}>SIGN IN</Link>
+            <SignInButton mode="modal">
+              <button className="nav-link" style={{ fontSize: '14px', marginLeft: '8px', marginRight: '8px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit', textTransform: 'uppercase', fontWeight: 'bold', color: 'var(--on-surface)', letterSpacing: '0.5px' }}>SIGN IN</button>
+            </SignInButton>
           </SignedOut>
           <SignedIn>
             <UserButton appearance={{ elements: { userButtonAvatarBox: { border: '2px solid var(--on-surface)', borderRadius: '0', width: '32px', height: '32px' } } }} />
           </SignedIn>
           
-          <Link to="/dashboard/keys" className="glow-button font-label-caps font-code-md" style={{ textDecoration: 'none', display: 'inline-block' }}>Get API Key</Link>
+          <SignedIn>
+            <Link to="/dashboard/keys" className="glow-button font-label-caps font-code-md" style={{ textDecoration: 'none', display: 'inline-block' }}>Get API Key</Link>
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="glow-button font-label-caps font-code-md" style={{ cursor: 'pointer' }}>Get API Key</button>
+            </SignInButton>
+          </SignedOut>
         </div>
       </nav>
     </>

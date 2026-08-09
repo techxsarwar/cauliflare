@@ -19,7 +19,7 @@ import EditionsPage from './pages/EditionsPage';
 import ApiDocsPage from './pages/ApiDocsPage';
 import GenericPage from './pages/GenericPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import SignInPage from './pages/SignInPage';
+
 import StatusPage from './pages/StatusPage';
 import TempMailProductPage from './pages/TempMailProductPage';
 
@@ -49,9 +49,9 @@ function App() {
           <Route path="/docs" element={<ApiDocsPage />} />
           <Route path="/status" element={<StatusPage />} />
           <Route path="/company/status" element={<StatusPage />} />
-          <Route path="/sign-in/*" element={<SignInPage />} />
-          <Route path="/sign-up/*" element={<SignInPage />} />
-          <Route path="/login" element={<Navigate to="/sign-in" replace />} />
+          <Route path="/sign-in/*" element={<Navigate to="/" replace />} />
+          <Route path="/sign-up/*" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
           
           {/* Products */}
           <Route path="/products/scam-detection" element={<GenericPage title="Scam Detection" tag="PRODUCT" description="Advanced scam detection API powered by AI." />} />
