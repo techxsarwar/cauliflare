@@ -19,6 +19,8 @@ import EditionsPage from './pages/EditionsPage';
 import ApiDocsPage from './pages/ApiDocsPage';
 import GenericPage from './pages/GenericPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import SecurityPolicyPage from './pages/SecurityPolicyPage';
 
 import StatusPage from './pages/StatusPage';
 import TempMailProductPage from './pages/TempMailProductPage';
@@ -68,8 +70,8 @@ function App() {
 
           {/* Legal */}
           <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/legal/terms" element={<GenericPage title="Terms of Service" tag="LEGAL" />} />
-          <Route path="/legal/security" element={<GenericPage title="Security" tag="LEGAL" description="How we secure our infrastructure and your data." />} />
+          <Route path="/legal/terms" element={<TermsOfServicePage />} />
+          <Route path="/legal/security" element={<SecurityPolicyPage />} />
 
           {/* Developers */}
           <Route path="/changelog" element={<GenericPage title="Changelog" tag="DEVELOPERS" description="Track API updates and new features." />} />
