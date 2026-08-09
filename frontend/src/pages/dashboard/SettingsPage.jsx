@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, ShieldAlert, Send, CheckCircle2, AlertTriangle, Save, Globe, Key, ShieldCheck } from 'lucide-react';
 import { getApiUrl } from '../../api';
+import { syncSettingsWithSupabase } from '../../utils/supabase';
 
 const SettingsPage = () => {
   const [projectName, setProjectName] = useState('Cauliflare Production Core');
@@ -88,9 +89,10 @@ const SettingsPage = () => {
     };
     try {
       localStorage.setItem('cauliflare_project_settings', JSON.stringify(settings));
-      showToast('Settings saved successfully!');
+      syncSettingsWithSupabase('sarwar_admin', settings);
+      showToast('Settings saved successfully and synced with cloud!');
     } catch (e) {
-      showToast('Failed to save settings to local storage.');
+      showToast('Failed to save settings.');
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/react';
 import { Key, Plus, Trash2, Copy, RefreshCw, Check, X, ShieldCheck } from 'lucide-react';
+import { syncApiKeysWithSupabase, loadApiKeysFromSupabase } from '../../utils/supabase';
 
 const ApiKeysPage = () => {
   const { user } = useUser();
@@ -68,6 +69,18 @@ const ApiKeysPage = () => {
     } catch (e) {
       console.error(e);
     }
+
+    // Cloud Supabase sync
+    if (userId) {
+      loadApiKeysFromSupabase(userId).then(cloudKeys => {
+        if (cloudKeys && Array.isArray(cloudKeys) && cloudKeys.length > 0) {
+          setKeys(cloudKeys);
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(cloudKeys));
+          } catch (e) {}
+        }
+      });
+    }
   }, [userId]);
 
   const saveKeys = (newKeys) => {
@@ -76,6 +89,9 @@ const ApiKeysPage = () => {
       localStorage.setItem(storageKey, JSON.stringify(newKeys));
     } catch (e) {
       console.error(e);
+    }
+    if (userId) {
+      syncApiKeysWithSupabase(userId, newKeys);
     }
   };
 
