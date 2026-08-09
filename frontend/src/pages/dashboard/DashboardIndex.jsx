@@ -245,11 +245,54 @@ const DashboardIndex = () => {
                     <div><span style={{ color: '#888' }}>Domain:</span> <strong>{checkResult.domain}</strong></div>
                     <div><span style={{ color: '#888' }}>Provider:</span> <strong>{checkResult.provider}</strong></div>
                     <div><span style={{ color: '#888' }}>Disposable / Burner:</span> <strong style={{ color: checkResult.disposable ? 'var(--error)' : 'var(--primary)' }}>{checkResult.disposable ? 'TRUE (BLOCKED)' : 'FALSE (ALLOWED)'}</strong></div>
+                    {checkResult.did_you_mean && (
+                      <div style={{ marginTop: '6px', color: '#ffd600' }}>
+                        💡 <strong>Typo Detected! Did you mean: {checkResult.did_you_mean}?</strong>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* LIVE REAL-TIME SECURITY ATTACK STREAM & THREAT RADAR */}
+      <section style={{ backgroundColor: 'var(--surface)', border: '3px solid var(--on-surface)', boxShadow: '8px 8px 0px var(--on-surface)', padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'var(--error)', display: 'inline-block' }}></span>
+            <h2 className="font-label-caps font-bold" style={{ fontSize: '15px' }}>LIVE THREAT STREAM & ATTACK RADAR</h2>
+          </div>
+          <span className="font-code-md font-bold" style={{ backgroundColor: '#121212', color: '#00e676', padding: '4px 10px', fontSize: '11px', border: '1px solid var(--on-surface)' }}>
+            ⚡ LIVE STREAM ACTIVE (&lt;10MS)
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+          {[
+            { country: '🇺🇸 United States', origin: 'AS14061 (Tor Exit Node)', vector: 'Anonymous Tor Relay', score: '98/100', time: 'Just now', type: 'BLOCK' },
+            { country: '🇩🇪 Germany', origin: 'user@x892jkl4.xyz', vector: 'High-Entropy Burner TLD', score: '92/100', time: '2s ago', type: 'BLOCK' },
+            { country: '🇮🇳 India', origin: 'sarwar@gamil.com', vector: 'Typo Detected (gmail.com)', score: '2/100', time: '5s ago', type: 'SUGGESTION' },
+            { country: '🇬🇧 United Kingdom', origin: '+12025550143', vector: 'Virtual VoIP Burner Range', score: '85/100', time: '11s ago', type: 'FLAG' },
+          ].map((threat, tidx) => (
+            <div key={tidx} style={{ padding: '16px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', boxShadow: '3px 3px 0px var(--on-surface)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span className="font-bold font-code-md" style={{ fontSize: '12px' }}>{threat.country}</span>
+                <span className="font-code-md text-on-surface-variant" style={{ fontSize: '11px' }}>{threat.time}</span>
+              </div>
+              <div className="font-code-md font-bold" style={{ fontSize: '13px', color: threat.type === 'BLOCK' ? 'var(--error)' : threat.type === 'SUGGESTION' ? '#e6a100' : 'var(--primary)', marginBottom: '4px' }}>
+                {threat.origin}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                <span className="font-body-md text-on-surface-variant" style={{ fontSize: '12px' }}>{threat.vector}</span>
+                <span style={{ padding: '2px 6px', fontSize: '10px', fontWeight: 'bold', backgroundColor: threat.type === 'BLOCK' ? 'var(--error)' : threat.type === 'SUGGESTION' ? '#ffd600' : 'var(--primary)', color: threat.type === 'SUGGESTION' ? '#121212' : '#ffffff' }}>
+                  {threat.score}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

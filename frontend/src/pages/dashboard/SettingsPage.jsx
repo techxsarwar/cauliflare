@@ -16,6 +16,41 @@ const SettingsPage = () => {
   const [testResult, setTestResult] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Custom Domain Rules State
+  const [customRules, setCustomRules] = useState([
+    { domain: 'competitor-spam.com', action: 'BLOCK', note: 'Known bad actor account generator' },
+    { domain: 'trusted-partner.org', action: 'ALLOW', note: 'Whitelisted enterprise partner' }
+  ]);
+  const [newDomainRule, setNewDomainRule] = useState('');
+  const [newDomainAction, setNewDomainAction] = useState('BLOCK');
+  const [newDomainNote, setNewDomainNote] = useState('');
+
+  const handleAddCustomRule = () => {
+    if (!newDomainRule.trim()) return;
+    const rule = {
+      domain: newDomainRule.trim().toLowerCase(),
+      action: newDomainAction,
+      note: newDomainNote.trim() || 'Custom override'
+    };
+    const updated = [rule, ...customRules.filter(r => r.domain !== rule.domain)];
+    setCustomRules(updated);
+    setNewDomainRule('');
+    setNewDomainNote('');
+    showToast(`Added custom rule for ${rule.domain} (${rule.action})`);
+
+    // Sync with backend
+    fetch(getApiUrl('/api/custom-rules'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rule)
+    }).catch(() => {});
+  };
+
+  const handleDeleteCustomRule = (domain) => {
+    setCustomRules(customRules.filter(r => r.domain !== domain));
+    showToast(`Removed custom rule for ${domain}`);
+  };
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -262,6 +297,133 @@ const SettingsPage = () => {
           </div>
         </div>
 
+        {/* 4. CUSTOM DOMAIN BLACKLIST & WHITELIST MANAGER */}
+        <div style={{ border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--on-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldCheck size={20} color="var(--primary)" />
+              <h2 className="font-label-caps" style={{ fontWeight: 'bold' }}>CUSTOM DOMAIN RULES (BLACKLIST & WHITELIST)</h2>
+            </div>
+            <span className="font-code-md text-on-surface-variant" style={{ fontSize: '12px' }}>Overrides global engine</span>
+          </div>
+
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px' }}>
+              Add custom domain overrides to immediately block bad-actor competitors or whitelist trusted enterprise domains.
+            </p>
+
+            {/* ADD RULE FORM */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={newDomainRule}
+                onChange={(e) => setNewDomainRule(e.target.value)}
+                placeholder="domain.com (e.g. competitor.com)"
+                className="font-code-md"
+                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)', outline: 'none' }}
+              />
+              <select
+                value={newDomainAction}
+                onChange={(e) => setNewDomainAction(e.target.value)}
+                className="font-code-md font-bold"
+                style={{ flex: 1, minWidth: '120px', padding: '10px 14px', backgroundColor: 'var(--surface)', border: '2px solid var(--on-surface)' }}
+              >
+                <option value="BLOCK">⛔ BLOCK</option>
+                <option value="ALLOW">✅ ALLOW</option>
+              </select>
+              <input
+                type="text"
+                value={newDomainNote}
+                onChange={(e) => setNewDomainNote(e.target.value)}
+                placeholder="Reason / Note (optional)"
+                className="font-code-md"
+                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)', outline: 'none' }}
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomRule}
+                className="press-button font-label-caps font-bold"
+                style={{ padding: '10px 20px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', cursor: 'pointer' }}
+              >
+                + ADD RULE
+              </button>
+            </div>
+
+            {/* RULES TABLE */}
+            <div style={{ border: '2px solid var(--on-surface)', maxHeight: '240px', overflowY: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--surface)' }} className="font-code-md">
+                <thead>
+                  <tr style={{ backgroundColor: 'var(--on-surface)', color: 'var(--surface)', textAlign: 'left' }}>
+                    <th style={{ padding: '8px 14px', fontSize: '11px' }}>DOMAIN</th>
+                    <th style={{ padding: '8px 14px', fontSize: '11px' }}>ACTION</th>
+                    <th style={{ padding: '8px 14px', fontSize: '11px' }}>NOTE</th>
+                    <th style={{ padding: '8px 14px', fontSize: '11px', textAlign: 'right' }}>REMOVE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customRules.map((rule, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid var(--outline-variant)' }}>
+                      <td style={{ padding: '10px 14px', fontWeight: 'bold' }}>{rule.domain}</td>
+                      <td style={{ padding: '10px 14px' }}>
+                        <span style={{ padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', backgroundColor: rule.action === 'BLOCK' ? 'var(--error)' : 'var(--primary)', color: '#ffffff' }}>
+                          {rule.action}
+                        </span>
+                      </td>
+                      <td style={{ padding: '10px 14px', color: 'var(--on-surface-variant)', fontSize: '12px' }}>{rule.note || 'No note'}</td>
+                      <td style={{ padding: '10px 14px', textAlign: 'right' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCustomRule(rule.domain)}
+                          style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                        >
+                          ✕
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. 1-LINE JAVASCRIPT FORM GUARD SDK GENERATOR */}
+        <div style={{ border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--on-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Key size={20} color="var(--primary)" />
+              <h2 className="font-label-caps" style={{ fontWeight: 'bold' }}>1-LINE EMBEDDABLE FORM GUARD (cauliflare.js)</h2>
+            </div>
+            <span className="font-code-md" style={{ backgroundColor: 'var(--primary)', color: '#ffffff', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold' }}>100% FREE SDK</span>
+          </div>
+
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px' }}>
+              Paste this single script tag into any HTML signup form or page. It automatically validates emails, blocks temporary burners, and alerts users of typos as they type!
+            </p>
+
+            <div style={{ position: 'relative' }}>
+              <pre className="font-code-md" style={{ margin: 0, padding: '16px', backgroundColor: '#121212', color: '#00e676', border: '2px solid var(--on-surface)', fontSize: '13px', overflowX: 'auto' }}>
+{`<script 
+  src="https://cauliflare-backend.onrender.com/cauliflare.js" 
+  data-key="cf_sarwar_cauliflare_live_x829a47f01b92c81d">
+</script>`}
+              </pre>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('<script src="https://cauliflare-backend.onrender.com/cauliflare.js" data-key="cf_sarwar_cauliflare_live_x829a47f01b92c81d"></script>');
+                  showToast('📋 Embed script tag copied to clipboard!');
+                }}
+                className="press-button font-label-caps font-bold"
+                style={{ position: 'absolute', top: '12px', right: '12px', padding: '6px 12px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '1px solid var(--on-surface)', cursor: 'pointer', fontSize: '11px' }}
+              >
+                COPY CODE
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* SAVE BUTTON */}
         <div>
           <button 
@@ -279,3 +441,4 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
+

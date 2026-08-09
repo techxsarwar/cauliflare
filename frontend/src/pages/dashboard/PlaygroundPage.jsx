@@ -27,10 +27,12 @@ const PlaygroundPage = () => {
 }`);
 
   const samplePayloads = {
-    '/api/check-email': `{\n  "email": "user@mailinator.com"\n}`,
+    '/api/check-email': `{\n  "email": "user@gamil.com"\n}`,
     '/api/scan-url': `{\n  "url": "https://bit.ly/login-verify-account"\n}`,
     '/api/detect-scam': `{\n  "text": "Your account is locked! Send OTP urgently to claim prize."\n}`,
     '/api/check-ip': `{\n  "ip": "185.220.101.5"\n}`,
+    '/api/inspect-domain': `{\n  "domain": "stripe.com"\n}`,
+    '/api/check-phone': `{\n  "phone": "+12025550143"\n}`,
     '/api/batch-check-email': `{\n  "emails": [\n    "user@mailinator.com",\n    "sarwar@cauliflare.in",\n    "bot@temp-mail.org",\n    "alex@gmail.com"\n  ]\n}`
   };
 
@@ -255,6 +257,8 @@ const PlaygroundPage = () => {
           <section style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             {[
               { label: 'Disposable Email (/api/check-email)', value: '/api/check-email' },
+              { label: 'Domain Intel & SPF (/api/inspect-domain)', value: '/api/inspect-domain' },
+              { label: 'Phone & VoIP (/api/check-phone)', value: '/api/check-phone' },
               { label: 'Phishing URL (/api/scan-url)', value: '/api/scan-url' },
               { label: 'Scam Detector (/api/detect-scam)', value: '/api/detect-scam' },
               { label: 'IP Threat & VPN (/api/check-ip)', value: '/api/check-ip' },

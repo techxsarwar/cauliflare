@@ -58,6 +58,20 @@ func setupRoutes() http.Handler {
 	mux.HandleFunc("/api/webhook/test", handleTestWebhook)
 	mux.HandleFunc("/v1/webhook/test", handleTestWebhook)
 
+	// Domain Intelligence & Corporate vs Freemail Inspector
+	mux.HandleFunc("/api/inspect-domain", handleInspectDomain)
+	mux.HandleFunc("/v1/inspect-domain", handleInspectDomain)
+	mux.HandleFunc("/inspect-domain", handleInspectDomain)
+
+	// Phone & VoIP Burner Detector
+	mux.HandleFunc("/api/check-phone", handleCheckPhone)
+	mux.HandleFunc("/v1/check-phone", handleCheckPhone)
+	mux.HandleFunc("/check-phone", handleCheckPhone)
+
+	// Custom Blacklist & Whitelist Rules
+	mux.HandleFunc("/api/custom-rules", handleCustomRules)
+	mux.HandleFunc("/v1/custom-rules", handleCustomRules)
+
 	// Real-time Logs & Threat Registry APIs
 	mux.HandleFunc("/api/logs", handleLogs)
 	mux.HandleFunc("/api/threats", handleThreats)
