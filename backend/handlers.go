@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -275,6 +276,80 @@ func syncGitHubDomains() (int, error) {
 	log.Printf("✅ Successfully synced %d total disposable email domains across multi-source blocklists!\n", len(liveDomainRegistry))
 	return len(liveDomainRegistry), nil
 }
+
+// sniffLiveWebsite probes the live domain's HTTP/HTTPS homepage (<4KB head) to detect temp-mail service titles/descriptions in real time
+func sniffLiveWebsite(domain string) (isDisposable bool, detectedTitle string) {
+	// Skip well-known legitimate providers immediately
+	cleanDomains := []string{
+		"google.com", "gmail.com", "yahoo.com", "outlook.com", "hotmail.com",
+		"icloud.com", "proton.me", "protonmail.com", "zoho.com", "aol.com",
+		"cauliflare.in", "github.com", "microsoft.com", "apple.com", "amazon.com",
+	}
+	for _, cd := range cleanDomains {
+		if domain == cd || strings.HasSuffix(domain, "."+cd) {
+			return false, ""
+		}
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 700*time.Millisecond)
+	defer cancel()
+
+	client := &http.Client{
+		Timeout: 700 * time.Millisecond,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			if len(via) >= 2 {
+				return http.ErrUseLastResponse
+			}
+			return nil
+		},
+	}
+
+	// Probe HTTPS first, then fallback to HTTP
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://"+domain, nil)
+	if err != nil {
+		return false, ""
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; CauliflareLiveThreatSniffer/2.0)")
+	req.Header.Set("Accept", "text/html")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		reqHTTP, errHTTP := http.NewRequestWithContext(ctx, http.MethodGet, "http://"+domain, nil)
+		if errHTTP != nil {
+			return false, ""
+		}
+		reqHTTP.Header.Set("User-Agent", "Mozilla/5.0 (compatible; CauliflareLiveThreatSniffer/2.0)")
+		resp, err = client.Do(reqHTTP)
+		if err != nil {
+			return false, ""
+		}
+	}
+	defer resp.Body.Close()
+
+	// Read only first 4KB of HTML head (ultra-low CPU/RAM usage)
+	buf := make([]byte, 4096)
+	n, _ := io.ReadFull(resp.Body, buf)
+	bodyStr := strings.ToLower(string(buf[:n]))
+
+	tempIndicators := []string{
+		"temporary email", "disposable email", "temp mail", "temp-mail",
+		"burner email", "burner inbox", "fake email", "trash mail",
+		"10 minute mail", "throwaway email", "receive sms online",
+		"anonymous email", "tempmail", "disposable mailbox",
+		"free temporary email", "generate email", "inbox kitten",
+		"email generator", "temporary mailbox", "guerrilla mail",
+		"temporary disposable", "10-minute mail", "random email generator",
+	}
+
+	for _, ind := range tempIndicators {
+		if strings.Contains(bodyStr, ind) {
+			return true, strings.Title(ind)
+		}
+	}
+
+	return false, ""
+}
+
 
 
 // Response Helpers & Middleware
@@ -702,6 +777,21 @@ func handleCheckEmail(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 			}
+		}
+	}
+
+	// Layer 5: Real-Time Live Web Intelligence & Homepage Title Sniffer (700ms 4KB probe)
+	if !isTemp {
+		if isWebDisposable, titleIndicator := sniffLiveWebsite(domain); isWebDisposable {
+			isTemp = true
+			provider = "Live Web Temp Mail Service (" + titleIndicator + ")"
+			riskScore = 98
+			reasons = append(reasons, "Live website content identifies as disposable email service: "+titleIndicator)
+
+			// Auto-learn and cache this domain for 0ms future lookups
+			domainMutex.Lock()
+			liveDomainRegistry[domain] = provider
+			domainMutex.Unlock()
 		}
 	}
 
