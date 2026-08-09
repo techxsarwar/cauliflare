@@ -8,12 +8,21 @@ const ApiKeysPage = () => {
   const userName = user?.firstName || user?.username || 'Sarwar';
   const storageKey = `cauliflare_user_keys_${userId}`;
 
-  // Default initial keys starting with sarwar-cauliflare
+  // Helper to extract clean slug for custom name + platform
+  const getCustomSlug = () => {
+    const raw = user?.firstName || user?.username || 'sarwar';
+    const clean = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return clean || 'sarwar';
+  };
+
+  const customSlug = getCustomSlug();
+
+  // Default initial keys: [customname] + [cauliflare platform]
   const defaultKeys = [
     {
       id: 1,
       name: `${userName} - Production Key`,
-      keyString: `cf_sarwar-cauliflare_live_x829a47f01b92c81d`,
+      keyString: `cf_${customSlug}_cauliflare_live_x829a47f01b92c81d`,
       created: 'May 1, 2026',
       lastUsed: '2m ago',
       env: 'Production'
@@ -21,7 +30,7 @@ const ApiKeysPage = () => {
     {
       id: 2,
       name: `${userName} - Staging Key`,
-      keyString: `cf_sarwar-cauliflare_test_b9102c38d49a71f02`,
+      keyString: `cf_${customSlug}_cauliflare_test_b9102c38d49a71f02`,
       created: 'May 15, 2026',
       lastUsed: 'Never',
       env: 'Staging'
@@ -84,9 +93,10 @@ const ApiKeysPage = () => {
 
   const handleRotate = (id, name) => {
     const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    const slug = getCustomSlug();
     const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') 
-      ? 'cf_sarwar-cauliflare_test_' 
-      : 'cf_sarwar-cauliflare_live_';
+      ? `cf_${slug}_cauliflare_test_` 
+      : `cf_${slug}_cauliflare_live_`;
     const updatedString = prefix + randomHex;
 
     const updated = keys.map(k => k.id === id ? { ...k, keyString: updatedString, created: 'Just now' } : k);
@@ -106,11 +116,12 @@ const ApiKeysPage = () => {
     e.preventDefault();
     if (!keyNameInput.trim()) return;
 
+    const slug = getCustomSlug();
     const prefix = keyEnvInput === 'Staging' 
-      ? 'cf_sarwar-cauliflare_test_' 
+      ? `cf_${slug}_cauliflare_test_` 
       : keyEnvInput === 'Development' 
-        ? 'cf_sarwar-cauliflare_dev_' 
-        : 'cf_sarwar-cauliflare_live_';
+        ? `cf_${slug}_cauliflare_dev_` 
+        : `cf_${slug}_cauliflare_live_`;
     const randomHex = Array.from({ length: 18 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
     const fullKey = prefix + randomHex;
 
@@ -131,8 +142,8 @@ const ApiKeysPage = () => {
   };
 
   const maskKey = (str) => {
-    if (str.length <= 26) return str;
-    return str.substring(0, 26) + '*****************';
+    if (str.length <= 28) return str;
+    return str.substring(0, 28) + '*****************';
   };
 
   return (
@@ -239,7 +250,7 @@ const ApiKeysPage = () => {
                   type="text" 
                   value={keyNameInput}
                   onChange={(e) => setKeyNameInput(e.target.value)}
-                  placeholder={`e.g. ${userName} - Backend API`}
+                  placeholder={`e.g. ${userName} - Production Client`}
                   required
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)', outline: 'none' }}
@@ -254,9 +265,9 @@ const ApiKeysPage = () => {
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: 'var(--surface-container)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', outline: 'none', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  <option value="Production">Production (cf_sarwar-cauliflare_live_...)</option>
-                  <option value="Staging">Staging (cf_sarwar-cauliflare_test_...)</option>
-                  <option value="Development">Development (cf_sarwar-cauliflare_dev_...)</option>
+                  <option value="Production">Production (cf_{customSlug}_cauliflare_live_...)</option>
+                  <option value="Staging">Staging (cf_{customSlug}_cauliflare_test_...)</option>
+                  <option value="Development">Development (cf_{customSlug}_cauliflare_dev_...)</option>
                 </select>
               </div>
 
