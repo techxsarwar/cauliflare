@@ -9,6 +9,7 @@ import {
   ShieldAlert, 
   Search, 
   Settings, 
+  Server,
   CreditCard, 
   BookOpen,
   Bell
@@ -73,7 +74,7 @@ const DashboardLayoutContent = () => {
 
           <div className="font-label-caps" style={{ fontSize: '12px', paddingLeft: '16px', marginTop: '24px', marginBottom: '8px', color: 'var(--on-surface)', fontWeight: '800', opacity: 0.8 }}>ACCOUNT</div>
           <NavItem to="/dashboard/settings" icon={Settings} label="Settings" />
-          <NavItem to="/dashboard/billing" icon={CreditCard} label="Billing" />
+          <NavItem to="/dashboard/billing" icon={Server} label="Self-Host ($0)" />
           
           <div style={{ marginTop: 'auto', paddingTop: '24px' }}>
             <NavItem to="/docs" icon={BookOpen} label="Documentation" />

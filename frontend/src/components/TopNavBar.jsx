@@ -175,7 +175,7 @@ const TopNavBar = () => {
             </div>
 
             <div className="nav-item">
-              <Link to="/pricing" className="nav-link">PRICING</Link>
+              <Link to="/pricing" className="nav-link">FREE TIER ($0)</Link>
             </div>
 
             <div className="nav-item">

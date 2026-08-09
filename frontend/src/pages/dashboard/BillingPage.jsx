@@ -1,81 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Check, ShieldCheck, Zap, CreditCard, Download, ExternalLink, X, ArrowRight, FileText, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, ShieldCheck, Zap, Terminal, Server, GitBranch, Copy, Download, Heart, ExternalLink } from 'lucide-react';
 
 const BillingPage = () => {
-  const [currentPlan, setCurrentPlan] = useState('Free');
-  const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState(null);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [copiedDocker, setCopiedDocker] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-  const [invoices, setInvoices] = useState([]);
-
-  useEffect(() => {
-    try {
-      const savedPlan = localStorage.getItem('cauliflare_user_plan');
-      if (savedPlan) setCurrentPlan(savedPlan);
-
-      const savedInvoices = localStorage.getItem('cauliflare_user_invoices');
-      if (savedInvoices) {
-        setInvoices(JSON.parse(savedInvoices));
-      } else {
-        // Initial real $0.00 Free Tier Registration Invoice
-        const initialFreeInvoice = [
-          {
-            id: 'INV-FREE-001',
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            plan: 'Free Developer Registration',
-            amount: '$0.00',
-            status: 'ACTIVE'
-          }
-        ];
-        setInvoices(initialFreeInvoice);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleOpenCheckout = (planName) => {
-    if (planName === currentPlan) return;
-    setSelectedPlanForCheckout(planName);
-    setIsCheckoutOpen(true);
+  const copyDockerCode = () => {
+    navigator.clipboard.writeText(`git clone https://github.com/techxsarwar/cauliflare.git\ncd cauliflare/backend\ngo run .`);
+    setCopiedDocker(true);
+    showToast('Deployment commands copied to clipboard!');
+    setTimeout(() => setCopiedDocker(false), 2500);
   };
 
-  const handleCompletePayment = (e) => {
-    e.preventDefault();
-    const amount = selectedPlanForCheckout === 'Developer Pro' ? '$29.00' : '$99.00';
-    const now = new Date();
-    const newInvoice = {
-      id: `INV-${Math.floor(100000 + Math.random() * 900000)}`,
-      date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      plan: `${selectedPlanForCheckout} Plan`,
-      amount: amount,
-      status: 'PAID'
-    };
-
-    const updatedInvoices = [newInvoice, ...invoices];
-    setInvoices(updatedInvoices);
-    setCurrentPlan(selectedPlanForCheckout);
-    setIsCheckoutOpen(false);
-
-    try {
-      localStorage.setItem('cauliflare_user_plan', selectedPlanForCheckout);
-      localStorage.setItem('cauliflare_user_invoices', JSON.stringify(updatedInvoices));
-    } catch (err) {}
-
-    showToast(`🎉 Successfully activated ${selectedPlanForCheckout} subscription! Invoice ${newInvoice.id} generated.`);
-  };
-
-  const handleDownloadInvoice = (inv) => {
+  const handleDownloadLicenseReceipt = () => {
     const htmlContent = `
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Receipt - ${inv.id} - Cauliflare Security</title>
+        <title>Cauliflare - Open Source License & Free Tier Certificate</title>
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; background: #ffffff; color: #121212; padding: 40px; margin: 0; }
           .invoice-box { max-width: 700px; margin: auto; border: 3px solid #121212; padding: 32px; box-shadow: 6px 6px 0px #121212; }
@@ -85,7 +32,7 @@ const BillingPage = () => {
           table { width: 100%; border-collapse: collapse; margin-top: 20px; }
           th { background: #121212; color: #ffffff; text-align: left; padding: 10px 14px; font-size: 12px; }
           td { padding: 12px 14px; border-bottom: 1px solid #e0e0e0; }
-          .total { font-size: 20px; font-weight: bold; text-align: right; margin-top: 20px; }
+          .total { font-size: 22px; font-weight: bold; text-align: right; margin-top: 20px; color: #00e676; }
           .footer { margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 16px; }
         </style>
       </head>
@@ -97,51 +44,57 @@ const BillingPage = () => {
               <div style="font-size: 13px; color: #555; margin-top: 4px;">Developer Threat Infrastructure & Fraud Defense</div>
             </div>
             <div style="text-align: right;">
-              <span class="badge">${inv.status}</span>
-              <div style="font-size: 14px; font-weight: bold; margin-top: 8px;">${inv.id}</div>
-              <div style="font-size: 12px; color: #666;">Date: ${inv.date}</div>
+              <span class="badge">100% FREE & OPEN SOURCE</span>
+              <div style="font-size: 14px; font-weight: bold; margin-top: 8px;">GNU GPL-3.0</div>
+              <div style="font-size: 12px; color: #666;">Date: ${new Date().toLocaleDateString()}</div>
             </div>
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
             <div>
-              <strong>Billed To:</strong><br>
-              Cauliflare Developer Account<br>
-              Account ID: cf_sarwar_live<br>
-              API Environment: Production Live
+              <strong>Account Holder:</strong><br>
+              Cauliflare Developer Community<br>
+              License: GNU General Public License v3.0<br>
+              Author: Sarwar
             </div>
             <div style="text-align: right;">
-              <strong>Payment Method:</strong><br>
-              Stripe Verified Gateway<br>
-              Card ending in •••• 4242<br>
-              Currency: USD ($)
+              <strong>Plan Status:</strong><br>
+              Permanent Free Tier<br>
+              Zero Paywalls / No Credit Card<br>
+              Cost: $0.00 / Forever
             </div>
           </div>
 
           <table>
             <thead>
               <tr>
-                <th>DESCRIPTION</th>
-                <th>PERIOD</th>
-                <th>RATE</th>
-                <th style="text-align: right;">AMOUNT</th>
+                <th>RESOURCE</th>
+                <th>ACCESS LEVEL</th>
+                <th>LICENSE</th>
+                <th style="text-align: right;">PRICE</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>${inv.plan}</strong><br><span style="font-size: 11px; color: #666;">Sub-10ms Threat APIs, Disposable Mail Scanner, Real-time Webhooks</span></td>
-                <td>1 Month</td>
-                <td>${inv.amount}</td>
-                <td style="text-align: right;"><strong>${inv.amount}</strong></td>
+                <td><strong>Hosted Cloud API & Playground</strong><br><span style="font-size: 11px; color: #666;">75,000+ Disposable Signatures, Typo Engine, Phone Validator</span></td>
+                <td>Global Edge Anycast</td>
+                <td>GNU GPL-3.0</td>
+                <td style="text-align: right;"><strong>$0.00</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Self-Hosted Docker & Go Engine</strong><br><span style="font-size: 11px; color: #666;">Unlimited Requests on Private Servers / VPS</span></td>
+                <td>Self-Hosted</td>
+                <td>GNU GPL-3.0</td>
+                <td style="text-align: right;"><strong>$0.00</strong></td>
               </tr>
             </tbody>
           </table>
 
-          <div class="total">Total Paid: ${inv.amount}</div>
+          <div class="total">Total Due: $0.00 (FREE FOREVER)</div>
 
           <div class="footer">
-            Thank you for building with Cauliflare Security Infrastructure.<br>
-            For support or questions regarding this invoice, contact security@cauliflare.in
+            Licensed under GNU General Public License v3.0.<br>
+            Attribution required: Designed & Developed by Sarwar (https://github.com/techxsarwar/cauliflare)
           </div>
         </div>
       </body>
@@ -156,67 +109,12 @@ const BillingPage = () => {
     } else {
       const link = document.createElement('a');
       link.href = url;
-      link.download = `cauliflare_${inv.id}.html`;
+      link.download = `cauliflare_license_certificate.html`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
   };
-
-  const plans = [
-    {
-      name: 'Free',
-      price: '$0',
-      period: 'forever',
-      description: 'Ideal for prototyping, personal side projects, and local development testing.',
-      limit: '10,000 requests / mo',
-      features: [
-        '75,000+ GitHub & Multi-source Disposable Email Signatures',
-        'Live Web Threat Sniffer & Typo Engine',
-        'Phishing URL & Malware Scanner',
-        'Scam Text Detection Engine',
-        'In-App API Playground & Embed SDK',
-        '100 req / sec rate limit'
-      ],
-      cta: 'Current Plan',
-      isCurrent: currentPlan === 'Free'
-    },
-    {
-      name: 'Developer Pro',
-      price: '$29',
-      period: 'per month',
-      popular: true,
-      description: 'Built for production startups, SaaS applications, and high-volume user sign-ups.',
-      limit: '500,000 requests / mo',
-      features: [
-        'Everything in Free Plan',
-        'Real-time Discord & Slack Webhook Alerts',
-        'IP Reputation & Tor/VPN Detection API',
-        'Bulk Batch Email & CSV Cleaner Tool',
-        '500 req / sec rate limit',
-        '99.99% Guaranteed SLA Uptime'
-      ],
-      cta: currentPlan === 'Developer Pro' ? 'Current Plan' : 'Upgrade to Developer Pro',
-      isCurrent: currentPlan === 'Developer Pro'
-    },
-    {
-      name: 'Enterprise Scale',
-      price: '$99',
-      period: 'per month',
-      description: 'Dedicated infrastructure for fintech, crypto, e-commerce, and enterprise platforms.',
-      limit: '5,000,000 requests / mo',
-      features: [
-        'Everything in Developer Pro',
-        'Custom Dedicated Domain Blocklists',
-        'Multi-Region Cloud Anycast Routing',
-        'Custom IP Range Whitelists',
-        'Dedicated 24/7 Slack / Discord Support Channel',
-        'SOC2 & GDPR Compliance Reports'
-      ],
-      cta: currentPlan === 'Enterprise Scale' ? 'Current Plan' : 'Upgrade to Enterprise Scale',
-      isCurrent: currentPlan === 'Enterprise Scale'
-    }
-  ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', position: 'relative' }}>
@@ -242,213 +140,155 @@ const BillingPage = () => {
         </div>
       )}
 
-      {/* CHECKOUT MODAL */}
-      {isCheckoutOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0,0,0,0.65)',
-          zIndex: 1100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '24px'
-        }}>
-          <div style={{
-            width: '100%',
-            maxWidth: '520px',
-            backgroundColor: 'var(--surface)',
-            border: '3px solid var(--on-surface)',
-            boxShadow: '10px 10px 0px var(--on-surface)',
-            padding: '32px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Zap size={22} color="var(--primary)" />
-                <h3 className="font-display-xl" style={{ fontSize: '24px' }}>UPGRADE TO {selectedPlanForCheckout}</h3>
-              </div>
-              <button onClick={() => setIsCheckoutOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={22} /></button>
-            </div>
-
-            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '14px', marginBottom: '20px' }}>
-              Instant activation. Your API key will immediately unlock higher rate limits, VPN detection, and webhook alerts.
-            </p>
-
-            <form onSubmit={handleCompletePayment} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label className="font-label-caps" style={{ display: 'block', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold' }}>CARDHOLDER NAME</label>
-                <input type="text" defaultValue="Sarwar (Cauliflare Developer)" required className="font-code-md" style={{ width: '100%', padding: '10px 14px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)' }} />
-              </div>
-
-              <div>
-                <label className="font-label-caps" style={{ display: 'block', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold' }}>CARD NUMBER</label>
-                <div style={{ display: 'flex', alignItems: 'center', backgroundColor: '#121212', border: '2px solid var(--on-surface)', padding: '0 12px' }}>
-                  <CreditCard size={18} color="#00e676" />
-                  <input type="text" defaultValue="•••• •••• •••• 4242" required className="font-code-md" style={{ width: '100%', padding: '10px 10px', backgroundColor: 'transparent', color: '#fff', border: 'none', outline: 'none' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label className="font-label-caps" style={{ display: 'block', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold' }}>EXPIRY</label>
-                  <input type="text" defaultValue="12/28" required className="font-code-md" style={{ width: '100%', padding: '10px 14px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)' }} />
-                </div>
-                <div>
-                  <label className="font-label-caps" style={{ display: 'block', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold' }}>CVC</label>
-                  <input type="text" defaultValue="888" required className="font-code-md" style={{ width: '100%', padding: '10px 14px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)' }} />
-                </div>
-              </div>
-
-              <div style={{ padding: '12px', backgroundColor: 'var(--surface-container)', border: '1px solid var(--on-surface)', marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="font-bold font-label-caps" style={{ fontSize: '12px' }}>Total Due Today:</span>
-                <span className="font-display-xl" style={{ fontSize: '20px', color: 'var(--primary)' }}>
-                  {selectedPlanForCheckout === 'Developer Pro' ? '$29.00' : '$99.00'}
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                <button type="button" onClick={() => setIsCheckoutOpen(false)} className="press-button font-label-caps" style={{ flex: 1, padding: '12px', backgroundColor: 'var(--surface)', border: '2px solid var(--on-surface)', cursor: 'pointer' }}>
-                  CANCEL
-                </button>
-                <button type="submit" className="glow-button font-label-caps font-bold" style={{ flex: 2, padding: '12px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  CONFIRM & ACTIVATE PLAN →
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* PAGE HEADER */}
-      <section>
-        <h1 className="font-display-xl" style={{ fontSize: '36px', marginBottom: '8px' }}>Subscription & Billing</h1>
-        <p className="font-body-lg text-on-surface-variant" style={{ fontWeight: '600' }}>
-          Manage your subscription tiers, monthly request limits, and official payment receipts.
-        </p>
-      </section>
-
-      {/* PLAN COMPARISON CARDS */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {plans.map((p, idx) => (
-          <div 
-            key={idx}
-            style={{
-              backgroundColor: p.isCurrent ? 'var(--surface)' : 'var(--surface-container)',
-              border: p.isCurrent ? '4px solid var(--primary)' : '2px solid var(--on-surface)',
-              boxShadow: p.isCurrent ? '8px 8px 0px var(--primary)' : '6px 6px 0px var(--on-surface)',
-              padding: '32px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              position: 'relative'
-            }}
-          >
-            {p.popular && (
-              <div style={{ position: 'absolute', top: '-14px', right: '20px', backgroundColor: 'var(--primary)', color: '#ffffff', padding: '4px 12px', border: '2px solid var(--on-surface)', fontSize: '11px', fontWeight: '900' }} className="font-label-caps">
-                MOST POPULAR
-              </div>
-            )}
-
-            <div>
-              <h3 className="font-display-xl" style={{ fontSize: '26px', marginBottom: '8px' }}>{p.name}</h3>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '12px' }}>
-                <span className="font-display-xl" style={{ fontSize: '42px', color: 'var(--primary)' }}>{p.price}</span>
-                <span className="font-code-md text-on-surface-variant" style={{ fontSize: '13px' }}>/{p.period}</span>
-              </div>
-              <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', marginBottom: '20px', minHeight: '40px' }}>
-                {p.description}
-              </p>
-
-              <div style={{ padding: '10px 14px', backgroundColor: '#121212', color: '#00e676', border: '2px solid var(--on-surface)', marginBottom: '24px', fontWeight: 'bold' }} className="font-code-md">
-                ⚡ {p.limit}
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
-                {p.features.map((feat, fidx) => (
-                  <div key={fidx} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <Check size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '3px' }} />
-                    <span className="font-body-md" style={{ fontSize: '13px', color: 'var(--on-surface)' }}>{feat}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button
-              onClick={() => handleOpenCheckout(p.name)}
-              disabled={p.isCurrent}
-              className={p.isCurrent ? "font-label-caps" : "glow-button font-label-caps font-bold"}
-              style={{
-                width: '100%',
-                padding: '14px',
-                backgroundColor: p.isCurrent ? 'var(--surface-container-highest)' : 'var(--primary)',
-                color: p.isCurrent ? 'var(--on-surface)' : '#ffffff',
-                border: '2px solid var(--on-surface)',
-                cursor: p.isCurrent ? 'default' : 'pointer',
-                fontWeight: 'bold',
-                fontSize: '13px'
-              }}
-            >
-              {p.isCurrent ? '✓ CURRENT ACTIVE PLAN' : p.cta}
-            </button>
+      <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', padding: '4px 12px', marginBottom: '12px' }}>
+            <Heart size={14} color="var(--error)" fill="var(--error)" />
+            <span className="font-label-caps font-bold" style={{ fontSize: '11px' }}>100% FREE & OPEN SOURCE FOREVER</span>
           </div>
-        ))}
-      </section>
-
-      {/* INVOICES & PAYMENT RECEIPTS */}
-      <section style={{ border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
-        <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--on-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FileText size={20} color="var(--primary)" />
-            <h2 className="font-label-caps" style={{ fontWeight: 'bold' }}>OFFICIAL BILLING RECEIPTS & INVOICE HISTORY</h2>
-          </div>
-          <span className="font-code-md text-on-surface-variant" style={{ fontSize: '12px' }}>Stripe Customer Billing Ledger</span>
+          <h1 className="font-display-xl" style={{ fontSize: '36px', marginBottom: '8px' }}>Open Source & Self-Hosting Hub</h1>
+          <p className="font-body-lg text-on-surface-variant" style={{ fontWeight: '600' }}>
+            Zero paywalls. No subscription fees. Use our free hosted cloud API or self-host your own cluster.
+          </p>
         </div>
 
-        {currentPlan === 'Free' && invoices.length <= 1 && (
-          <div style={{ padding: '16px 24px', backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--outline-variant)' }}>
-            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', margin: 0 }}>
-              💡 <strong>Free Tier Active:</strong> You are currently using the Free Developer tier ($0.00 / mo). When you upgrade to Developer Pro or Enterprise Scale, your official paid receipts and tax invoices will generate here automatically.
+        <button 
+          onClick={handleDownloadLicenseReceipt}
+          className="press-button font-label-caps font-bold"
+          style={{ padding: '10px 18px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
+        >
+          <Download size={15} /> DOWNLOAD LICENSE CERTIFICATE
+        </button>
+      </section>
+
+      {/* ACTIVE ZERO-PAYWALL STATUS CARD */}
+      <section style={{ 
+        backgroundColor: 'var(--primary)', 
+        color: '#ffffff', 
+        border: '3px solid var(--on-surface)', 
+        boxShadow: '8px 8px 0px var(--on-surface)', 
+        padding: '32px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        <div>
+          <div className="font-label-caps" style={{ opacity: 0.9, letterSpacing: '0.1em', fontWeight: 'bold' }}>ACTIVE ACCOUNT TIER</div>
+          <div className="font-display-xl" style={{ fontSize: '42px', marginTop: '4px' }}>PERMANENT FREE ACCESS ($0.00)</div>
+          <p className="font-body-md" style={{ opacity: 0.95, marginTop: '8px', maxWidth: '600px' }}>
+            Your workspace has unrestricted access to all threat detection endpoints, typo correction, phone verification, and embeddable SDKs.
+          </p>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div className="font-code-md font-bold" style={{ backgroundColor: '#121212', color: '#00e676', padding: '6px 14px', border: '2px solid #ffffff', fontSize: '13px', display: 'inline-block' }}>
+            ✓ GNU GPL-3.0 COMPLIANT
+          </div>
+        </div>
+      </section>
+
+      {/* 2 TIERS: HOSTED CLOUD VS SELF-HOSTED */}
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+        
+        {/* OPTION 1: FREE HOSTED CLOUD */}
+        <div style={{ backgroundColor: 'var(--surface)', border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', padding: '32px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <Zap size={22} color="var(--primary)" />
+              <h3 className="font-display-xl" style={{ fontSize: '24px' }}>FREE HOSTED CLOUD API</h3>
+            </div>
+            <div className="font-display-xl" style={{ fontSize: '38px', color: 'var(--primary)', margin: '12px 0' }}>$0.00 <span className="font-code-md text-on-surface-variant" style={{ fontSize: '13px' }}>/ FOREVER</span></div>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', marginBottom: '20px' }}>
+              Ready-to-use cloud infrastructure hosted across multi-region edge nodes.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+              {[
+                'Instant API Key Generation',
+                '75,000+ Disposable Email Blocklist',
+                'Typo & Did You Mean? Engine',
+                'Corporate Domain & SPF/DMARC Inspector',
+                'Drop-in cauliflare.js Embed Script',
+                'Zero Configuration Required'
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                  <Check size={15} color="var(--primary)" /> {f}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ padding: '12px', backgroundColor: 'var(--surface-container)', border: '1px solid var(--on-surface)', textAlign: 'center', fontWeight: 'bold' }} className="font-code-md">
+            ⚡ CURRENTLY ACTIVE
+          </div>
+        </div>
+
+        {/* OPTION 2: SELF-HOSTED DOCKER / VPS */}
+        <div style={{ backgroundColor: 'var(--surface-container)', border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', padding: '32px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <Server size={22} color="var(--on-surface)" />
+              <h3 className="font-display-xl" style={{ fontSize: '24px' }}>SELF-HOSTED DOCKER / VPS</h3>
+            </div>
+            <div className="font-display-xl" style={{ fontSize: '38px', color: 'var(--on-surface)', margin: '12px 0' }}>$0.00 <span className="font-code-md text-on-surface-variant" style={{ fontSize: '13px' }}>/ UNLIMITED</span></div>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', marginBottom: '20px' }}>
+              Run on your own servers, AWS, DigitalOcean, or Docker with zero rate limits and total privacy.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+              {[
+                'Unlimited Monthly API Requests',
+                '100% Private In-Memory Execution',
+                'Data Never Leaves Your Network',
+                'Deploy on Docker, Linux, or Kubernetes',
+                'Air-Gapped / Offline Capable',
+                'GNU GPL-3.0 Open Source Freedom'
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                  <Check size={15} color="var(--primary)" /> {f}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <a 
+            href="https://github.com/techxsarwar/cauliflare" 
+            target="_blank" 
+            rel="noreferrer"
+            className="press-button font-label-caps font-bold" 
+            style={{ width: '100%', padding: '12px', backgroundColor: 'var(--surface)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '12px' }}
+          >
+            <GitBranch size={15} /> VIEW DOCKER & SOURCE CODE
+          </a>
+        </div>
+
+      </section>
+
+      {/* QUICK COPY COMMANDS */}
+      <section style={{ backgroundColor: 'var(--surface)', border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', padding: '28px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h3 className="font-headline-md" style={{ fontSize: '20px' }}>⚡ SELF-HOST CAULIFLARE IN 10 SECONDS</h3>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', marginTop: '2px' }}>
+              Run the Go threat engine locally or on your production VPS.
             </p>
           </div>
-        )}
+          <button 
+            onClick={copyDockerCode}
+            className="press-button font-label-caps font-bold"
+            style={{ padding: '8px 16px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}
+          >
+            <Copy size={13} /> {copiedDocker ? 'COPIED!' : 'COPY COMMANDS'}
+          </button>
+        </div>
 
-        <div style={{ padding: '0', overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--surface)' }} className="font-code-md">
-            <thead>
-              <tr style={{ backgroundColor: 'var(--on-surface)', color: 'var(--surface)', textAlign: 'left' }}>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>INVOICE ID</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>DATE</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>PLAN DESCRIPTION</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>AMOUNT</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>STATUS</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px', textAlign: 'right' }}>ACTION</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoices.map((inv, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid var(--outline-variant)' }}>
-                  <td style={{ padding: '14px 20px', fontWeight: 'bold' }}>{inv.id}</td>
-                  <td style={{ padding: '14px 20px' }}>{inv.date}</td>
-                  <td style={{ padding: '14px 20px' }}>{inv.plan}</td>
-                  <td style={{ padding: '14px 20px', fontWeight: 'bold' }}>{inv.amount}</td>
-                  <td style={{ padding: '14px 20px' }}>
-                    <span style={{ padding: '3px 8px', fontSize: '11px', fontWeight: 'bold', backgroundColor: 'var(--primary)', color: '#ffffff' }}>
-                      {inv.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '14px 20px', textAlign: 'right' }}>
-                    <button 
-                      onClick={() => handleDownloadInvoice(inv)}
-                      className="press-button font-label-caps"
-                      style={{ background: 'var(--surface-container)', border: '1px solid var(--on-surface)', padding: '4px 10px', color: 'var(--on-surface)', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}
-                    >
-                      <Download size={13} /> VIEW RECEIPT
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div style={{ backgroundColor: '#121212', color: '#00e676', padding: '16px', border: '2px solid var(--on-surface)', overflowX: 'auto' }} className="font-code-md">
+          <pre style={{ margin: 0, fontSize: '13px' }}>{`git clone https://github.com/techxsarwar/cauliflare.git
+cd cauliflare/backend
+go run .
+# 🚀 Running on http://127.0.0.1:8000 with sub-10ms Go in-memory execution`}</pre>
         </div>
       </section>
 
