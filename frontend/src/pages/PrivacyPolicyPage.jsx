@@ -161,10 +161,9 @@ const PrivacyPolicyPage = () => {
           <p>Updated versions will be posted on this page with a revised “Last Updated” date.</p>
 
           <h2 className="font-headline-md text-on-surface" style={{ marginTop: '32px' }}>13. Contact</h2>
-          <p>For privacy or security inquiries:</p>
+          <p>For privacy, security, or developer inquiries:</p>
           <ul style={{ paddingLeft: '24px', listStyleType: 'square' }}>
-            <li><a href="mailto:privacy@cauliflare.in" style={{ color: 'var(--primary-fixed)' }}>privacy@cauliflare.in</a></li>
-            <li><a href="mailto:security@cauliflare.in" style={{ color: 'var(--primary-fixed)' }}>security@cauliflare.in</a></li>
+            <li><a href="mailto:contact@sarwaraltaf.in" style={{ color: 'var(--primary)' }}>contact@sarwaraltaf.in</a></li>
           </ul>
 
           <h2 className="font-headline-md text-on-surface" style={{ marginTop: '32px' }}>14. Transparency</h2>
