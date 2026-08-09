@@ -8,29 +8,25 @@ const ApiKeysPage = () => {
   const userName = user?.firstName || user?.username || 'Sarwar';
   const storageKey = `cauliflare_user_keys_${userId}`;
 
-  // Helper to extract clean slug for custom name + platform
-  const getCustomSlug = () => {
-    const raw = user?.firstName || user?.username || 'sarwar';
-    const clean = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return clean || 'sarwar';
-  };
+  // Constant platform prefix: always sarwar_cauliflare
+  const PREFIX_LIVE = 'cf_sarwar_cauliflare_live_';
+  const PREFIX_TEST = 'cf_sarwar_cauliflare_test_';
+  const PREFIX_DEV = 'cf_sarwar_cauliflare_dev_';
 
-  const customSlug = getCustomSlug();
-
-  // Default initial keys: [customname] + [cauliflare platform]
+  // Default initial keys
   const defaultKeys = [
     {
       id: 1,
-      name: `${userName} - Production Key`,
-      keyString: `cf_${customSlug}_cauliflare_live_x829a47f01b92c81d`,
+      name: `Sarwar - Production Key`,
+      keyString: `cf_sarwar_cauliflare_live_x829a47f01b92c81d`,
       created: 'May 1, 2026',
       lastUsed: '2m ago',
       env: 'Production'
     },
     {
       id: 2,
-      name: `${userName} - Staging Key`,
-      keyString: `cf_${customSlug}_cauliflare_test_b9102c38d49a71f02`,
+      name: `Sarwar - Staging Key`,
+      keyString: `cf_sarwar_cauliflare_test_b9102c38d49a71f02`,
       created: 'May 15, 2026',
       lastUsed: 'Never',
       env: 'Staging'
@@ -41,7 +37,12 @@ const ApiKeysPage = () => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Normalize any old keys to the standard cf_sarwar_cauliflare_ prefix
+        return parsed.map(k => ({
+          ...k,
+          keyString: k.keyString.replace(/^cf_[a-z0-9_-]+_live_/, PREFIX_LIVE).replace(/^cf_[a-z0-9_-]+_test_/, PREFIX_TEST).replace(/^cf_[a-z0-9_-]+_dev_/, PREFIX_DEV)
+        }));
       }
     } catch (e) {
       console.error(e);
@@ -53,7 +54,13 @@ const ApiKeysPage = () => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        setKeys(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        const normalized = parsed.map(k => ({
+          ...k,
+          keyString: k.keyString.replace(/^cf_[a-z0-9_-]+_live_/, PREFIX_LIVE).replace(/^cf_[a-z0-9_-]+_test_/, PREFIX_TEST).replace(/^cf_[a-z0-9_-]+_dev_/, PREFIX_DEV)
+        }));
+        setKeys(normalized);
+        localStorage.setItem(storageKey, JSON.stringify(normalized));
       } else {
         setKeys(defaultKeys);
         localStorage.setItem(storageKey, JSON.stringify(defaultKeys));
@@ -61,7 +68,7 @@ const ApiKeysPage = () => {
     } catch (e) {
       console.error(e);
     }
-  }, [userId, userName]);
+  }, [userId]);
 
   const saveKeys = (newKeys) => {
     setKeys(newKeys);
@@ -93,10 +100,9 @@ const ApiKeysPage = () => {
 
   const handleRotate = (id, name) => {
     const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const slug = getCustomSlug();
     const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') 
-      ? `cf_${slug}_cauliflare_test_` 
-      : `cf_${slug}_cauliflare_live_`;
+      ? PREFIX_TEST 
+      : PREFIX_LIVE;
     const updatedString = prefix + randomHex;
 
     const updated = keys.map(k => k.id === id ? { ...k, keyString: updatedString, created: 'Just now' } : k);
@@ -116,12 +122,11 @@ const ApiKeysPage = () => {
     e.preventDefault();
     if (!keyNameInput.trim()) return;
 
-    const slug = getCustomSlug();
     const prefix = keyEnvInput === 'Staging' 
-      ? `cf_${slug}_cauliflare_test_` 
+      ? PREFIX_TEST 
       : keyEnvInput === 'Development' 
-        ? `cf_${slug}_cauliflare_dev_` 
-        : `cf_${slug}_cauliflare_live_`;
+        ? PREFIX_DEV 
+        : PREFIX_LIVE;
     const randomHex = Array.from({ length: 18 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
     const fullKey = prefix + randomHex;
 
@@ -250,7 +255,7 @@ const ApiKeysPage = () => {
                   type="text" 
                   value={keyNameInput}
                   onChange={(e) => setKeyNameInput(e.target.value)}
-                  placeholder={`e.g. ${userName} - Production Client`}
+                  placeholder="e.g. Production Server, Mobile App Client"
                   required
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)', outline: 'none' }}
@@ -265,9 +270,9 @@ const ApiKeysPage = () => {
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: 'var(--surface-container)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', outline: 'none', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  <option value="Production">Production (cf_{customSlug}_cauliflare_live_...)</option>
-                  <option value="Staging">Staging (cf_{customSlug}_cauliflare_test_...)</option>
-                  <option value="Development">Development (cf_{customSlug}_cauliflare_dev_...)</option>
+                  <option value="Production">Production (cf_sarwar_cauliflare_live_...)</option>
+                  <option value="Staging">Staging (cf_sarwar_cauliflare_test_...)</option>
+                  <option value="Development">Development (cf_sarwar_cauliflare_dev_...)</option>
                 </select>
               </div>
 
@@ -298,7 +303,7 @@ const ApiKeysPage = () => {
         <div>
           <h1 className="font-display-xl" style={{ fontSize: '32px', marginBottom: '8px' }}>API Keys</h1>
           <p className="font-body-lg" style={{ color: 'var(--on-surface)', opacity: 0.85, fontWeight: '600' }}>
-            Manage authentication keys for <strong>{userName}</strong> ({user?.primaryEmailAddress?.emailAddress || 'sarwar@cauliflare.in'}).
+            Manage authentication keys for <strong>Sarwar</strong> ({user?.primaryEmailAddress?.emailAddress || 'sarwar@cauliflare.in'}).
           </p>
         </div>
         <button 
