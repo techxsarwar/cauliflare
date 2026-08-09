@@ -12,13 +12,17 @@ const AnalyticsCard = ({ title, value, sub, icon: Icon, color }) => (
   </div>
 );
 
+import { getApiUrl } from '../../api';
+
 const AnalyticsPage = () => {
   const [metrics, setMetrics] = React.useState({ total_domains: 74697, latency: { prefix: '<', target: 8, suffix: 'ms' } });
 
   React.useEffect(() => {
-    fetch('/api/metrics')
+    fetch(getApiUrl('/api/metrics'))
       .then(res => res.json())
-      .then(data => setMetrics(data))
+      .then(data => {
+        if (data.total_domains) setMetrics(data);
+      })
       .catch(err => console.error(err));
   }, []);
 
