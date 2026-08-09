@@ -16,7 +16,7 @@ const StatCard = ({ title, value, label, icon: Icon, colorClass }) => (
 
 const DashboardIndex = () => {
   const { user } = useUser();
-  const firstName = user?.firstName || user?.username || 'Developer';
+  const firstName = user?.firstName || user?.username || 'Sarwar';
   const [testEmail, setTestEmail] = useState('user@mailinator.com');
   const [checkResult, setCheckResult] = useState(null);
   const [loading, setLoading] = useState(false);

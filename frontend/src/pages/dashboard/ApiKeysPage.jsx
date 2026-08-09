@@ -4,11 +4,19 @@ import { Key, Plus, Trash2, Copy, RefreshCw, Check, X, ShieldCheck } from 'lucid
 
 const ApiKeysPage = () => {
   const { user } = useUser();
-  const userId = user?.id || 'dev_user';
-  const userName = user?.firstName || user?.username || 'Developer';
+  const userId = user?.id || 'sarwar_admin';
+  // Use Clerk user name if provided, otherwise default to Sarwar
+  const userName = user?.firstName || user?.username || 'Sarwar';
   const storageKey = `cauliflare_user_keys_${userId}`;
 
-  // Initialize keys from per-user localStorage or create a personalized default key
+  // Helper to get formatted user slug for key prefix (e.g., 'sarwar')
+  const getUserSlug = () => {
+    const raw = user?.firstName || user?.username || 'sarwar';
+    const clean = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return clean || 'sarwar';
+  };
+
+  // Initialize keys from localStorage or create default Sarwar production & staging keys
   const [keys, setKeys] = useState(() => {
     try {
       const saved = localStorage.getItem(storageKey);
@@ -19,38 +27,51 @@ const ApiKeysPage = () => {
       console.error(e);
     }
     
-    // Default initial key personalized to the authenticated user
-    const randomHex1 = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const userSlug = (user?.firstName || 'live').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const userSlug = (user?.firstName || user?.username || 'sarwar').toLowerCase().replace(/[^a-z0-9]/g, '') || 'sarwar';
     return [
       {
         id: 1,
         name: `${userName} - Production Key`,
-        keyString: `cf_${userSlug}_live_${randomHex1}`,
-        created: 'Today',
-        lastUsed: 'Just now',
+        keyString: `cf_${userSlug}_live_x829a47f01b92c81d`,
+        created: 'May 1, 2026',
+        lastUsed: '2m ago',
         env: 'Production'
+      },
+      {
+        id: 2,
+        name: `${userName} - Staging Key`,
+        keyString: `cf_${userSlug}_test_b9102c38d49a71f02`,
+        created: 'May 15, 2026',
+        lastUsed: 'Never',
+        env: 'Staging'
       }
     ];
   });
 
-  // Whenever keys or user change, persist to that user's localStorage
+  // Whenever user changes, ensure their keys are loaded / saved
   useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         setKeys(JSON.parse(saved));
       } else {
-        const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-        const userSlug = (user?.firstName || 'live').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const userSlug = getUserSlug();
         const initialKeys = [
           {
             id: 1,
             name: `${userName} - Production Key`,
-            keyString: `cf_${userSlug}_live_${randomHex}`,
-            created: 'Today',
-            lastUsed: 'Just now',
+            keyString: `cf_${userSlug}_live_x829a47f01b92c81d`,
+            created: 'May 1, 2026',
+            lastUsed: '2m ago',
             env: 'Production'
+          },
+          {
+            id: 2,
+            name: `${userName} - Staging Key`,
+            keyString: `cf_${userSlug}_test_b9102c38d49a71f02`,
+            created: 'May 15, 2026',
+            lastUsed: 'Never',
+            env: 'Staging'
           }
         ];
         setKeys(initialKeys);
@@ -91,8 +112,10 @@ const ApiKeysPage = () => {
 
   const handleRotate = (id, name) => {
     const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const userSlug = (user?.firstName || 'key').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') ? `cf_${userSlug}_test_` : `cf_${userSlug}_live_`;
+    const userSlug = getUserSlug();
+    const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') 
+      ? `cf_${userSlug}_test_` 
+      : `cf_${userSlug}_live_`;
     const updatedString = prefix + randomHex;
 
     const updated = keys.map(k => k.id === id ? { ...k, keyString: updatedString, created: 'Just now' } : k);
@@ -112,8 +135,12 @@ const ApiKeysPage = () => {
     e.preventDefault();
     if (!keyNameInput.trim()) return;
 
-    const userSlug = (user?.firstName || 'key').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const prefix = keyEnvInput === 'Staging' ? `cf_${userSlug}_test_` : keyEnvInput === 'Development' ? `cf_${userSlug}_dev_` : `cf_${userSlug}_live_`;
+    const userSlug = getUserSlug();
+    const prefix = keyEnvInput === 'Staging' 
+      ? `cf_${userSlug}_test_` 
+      : keyEnvInput === 'Development' 
+        ? `cf_${userSlug}_dev_` 
+        : `cf_${userSlug}_live_`;
     const randomHex = Array.from({ length: 18 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
     const fullKey = prefix + randomHex;
 
@@ -135,7 +162,7 @@ const ApiKeysPage = () => {
 
   const maskKey = (str) => {
     if (str.length <= 12) return str;
-    return str.substring(0, 8) + '*****************';
+    return str.substring(0, 14) + '*****************';
   };
 
   return (
@@ -242,7 +269,7 @@ const ApiKeysPage = () => {
                   type="text" 
                   value={keyNameInput}
                   onChange={(e) => setKeyNameInput(e.target.value)}
-                  placeholder="e.g. Production Backend, Web App Client"
+                  placeholder={`e.g. ${userName} - Backend API`}
                   required
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: '#121212', color: '#fff', border: '2px solid var(--on-surface)', outline: 'none' }}
@@ -257,9 +284,9 @@ const ApiKeysPage = () => {
                   className="font-code-md"
                   style={{ width: '100%', padding: '12px 16px', backgroundColor: 'var(--surface-container)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', outline: 'none', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  <option value="Production">Production (cf_live_...)</option>
-                  <option value="Staging">Staging (cf_test_...)</option>
-                  <option value="Development">Development (cf_dev_...)</option>
+                  <option value="Production">Production (cf_{getUserSlug()}_live_...)</option>
+                  <option value="Staging">Staging (cf_{getUserSlug()}_test_...)</option>
+                  <option value="Development">Development (cf_{getUserSlug()}_dev_...)</option>
                 </select>
               </div>
 
@@ -290,7 +317,7 @@ const ApiKeysPage = () => {
         <div>
           <h1 className="font-display-xl" style={{ fontSize: '32px', marginBottom: '8px' }}>API Keys</h1>
           <p className="font-body-lg" style={{ color: 'var(--on-surface)', opacity: 0.85, fontWeight: '600' }}>
-            Manage authentication keys for <strong>{userName}</strong> ({user?.primaryEmailAddress?.emailAddress || 'User Account'}).
+            Manage authentication keys for <strong>{userName}</strong> ({user?.primaryEmailAddress?.emailAddress || 'sarwar@cauliflare.in'}).
           </p>
         </div>
         <button 
