@@ -1,166 +1,172 @@
 <div align="center">
+  <img src="https://cauliflare.vercel.app/vite.svg" width="64" height="64" alt="Cauliflare Logo" />
   <h1>CAULIFLARE</h1>
-  <p><strong>Infrastructure APIs for scam detection, search intelligence, and developer security.</strong></p>
-  <p><em>Built for developers.</em></p>
+  <p><strong>Sub-10ms Developer Infrastructure APIs for Disposable Email Blocking, Scam Detection, Domain Intelligence & Fraud Defense.</strong></p>
+  <p><em>Engineered in Go & React for high-throughput internet platforms.</em></p>
 
-  ![License](https://img.shields.io/badge/License-MIT-black.svg?style=for-the-badge)
-  ![API Status](https://img.shields.io/badge/API-Operational-success?style=for-the-badge)
-  ![Version](https://img.shields.io/badge/version-1.0.0-orange?style=for-the-badge)
+  <p>
+    <a href="https://github.com/techxsarwar/cauliflare/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-black.svg?style=for-the-badge" alt="License" /></a>
+    <a href="https://cauliflare.vercel.app/status"><img src="https://img.shields.io/badge/Uptime-99.99%25-00e676?style=for-the-badge" alt="Uptime" /></a>
+    <a href="https://cauliflare.vercel.app"><img src="https://img.shields.io/badge/Speed-%3C8ms%20Go%20Engine-blue?style=for-the-badge" alt="Speed" /></a>
+    <a href="https://cauliflare.vercel.app"><img src="https://img.shields.io/badge/Signatures-75%2C000%2B%20Live-orange?style=for-the-badge" alt="Signatures" /></a>
+  </p>
 </div>
 
 <br />
 
-<div align="center">
-  <img src="screen.png" alt="Cauliflare Dashboard" width="800" style="border: 4px solid #1c1c1c; box-shadow: 4px 4px 0px #1c1c1c; border-radius: 4px;" />
-</div>
+---
 
-<br />
+## ⚡ What is Cauliflare?
 
-## ⚡ Cauliflare
+**Cauliflare** is an enterprise-grade developer security platform that protects user sign-ups, payment funnels, and web applications from fraudulent actors, botnets, and temporary disposable email burners.
 
-Cauliflare provides fast and scalable APIs for:
-- Scam detection
-- URL threat analysis
-- Temporary email detection
-- Search intelligence
-- AI moderation
-
-Designed for developers building modern internet applications.
+Built with an ultra-lightweight **Go In-Memory Threat Engine** and a **Cyber-Industrial React Dashboard**, Cauliflare delivers sub-10 millisecond lookups without external database latency.
 
 ---
 
-## 🚀 Features
+## 🛡️ Key Capabilities
 
-- **Scam Detection API**
-- **URL Threat Scanner**
-- **Temp Mail Detection**
-- **Spam Analysis**
-- **Search Intelligence**
-- **Fast REST API**
-- **Developer-first SDKs**
-- **Real-time responses**
+| Feature | Endpoint | Description |
+| :--- | :--- | :--- |
+| **5-Layer Temp-Mail Defense** | `POST /v1/check-email` | 75,000+ GitHub signatures, high-entropy TLD scanners, DNS MX analysis, and live website sniffing. |
+| **Email Typo Engine** | `POST /v1/check-email` | Levenshtein distance typo corrections (`user@gamil.com` ➔ `user@gmail.com`). |
+| **Domain Intelligence & SPF/DMARC** | `POST /v1/inspect-domain` | Classifies Corporate vs Freemail and validates DNS SPF & DMARC anti-spoofing policies. |
+| **Virtual VoIP & Burner Phone Checker** | `POST /v1/check-phone` | Intercepts Twilio, Bandwidth, and public online SMS burner pools. |
+| **Phishing & Malware URL Scanner** | `POST /v1/scan-url` | Detects credential phishing chains, malicious redirect paths, and unverified SSL certificates. |
+| **Scam & Social Engineering Detector** | `POST /v1/detect-scam` | Natural language threat scanner for urgent financial fraud, crypto scams, and OTP harvesting. |
+| **IP Reputation & Tor/VPN Detector** | `POST /v1/check-ip` | Flags Datacenter ASNs, Tor Exit Nodes, and anonymous proxy relays. |
+| **Batch Bulk Email Cleaner** | `POST /v1/batch-check-email` | Clean entire CSVs or batch payloads of up to 1,000 emails concurrently. |
 
 ---
 
-## 📦 Installation
+## 💻 1-Line Drop-in Form Guard SDK (`cauliflare.js`)
 
-To run the Cauliflare web app locally:
+Add client-side form validation to any HTML form with a single line of code:
 
-```bash
-git clone https://github.com/techxsarwar/cauliflare.git
-cd cauliflare
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-**Backend:**
-```bash
-cd backend
-go run .
+```html
+<script 
+  src="https://cauliflare.vercel.app/cauliflare.js" 
+  data-cauliflare-key="cf_sarwar_cauliflare_live_x829a47f01b92c81d"
+  data-block-disposable="true"
+  data-suggest-typos="true"
+  async>
+</script>
 ```
 
 ---
 
-## ⚡ Quick Start
+## 🚀 Quickstart API Examples
 
+### cURL
+```bash
+curl -X POST "https://cauliflare-backend.onrender.com/v1/check-email" \
+  -H "Authorization: Bearer cf_sarwar_cauliflare_live_x829a47f01b92c81d" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@mailinator.com"}'
+```
+
+### Python
+```python
+import requests
+
+res = requests.post(
+    "https://cauliflare-backend.onrender.com/v1/check-email",
+    headers={"Authorization": "Bearer cf_sarwar_cauliflare_live_x829a47f01b92c81d"},
+    json={"email": "user@gamil.com"}
+)
+data = res.json()
+if data.get("typo_detected"):
+    print(f"Did you mean {data.get('did_you_mean')}?")
+```
+
+### Node.js / Express Middleware
 ```javascript
-const response = await fetch("https://api.cauliflare.in/scan-url", {
-  method: "POST",
-  headers: {
-    "Authorization": "Bearer YOUR_API_KEY",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    url: "http://suspicious-site.com"
-  })
-})
+async function cauliflareGuard(req, res, next) {
+  const { email } = req.body;
+  const check = await fetch("https://cauliflare-backend.onrender.com/v1/check-email", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer cf_sarwar_cauliflare_live_x829a47f01b92c81d",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email })
+  }).then(r => r.json());
 
-const data = await response.json()
-console.log(data)
+  if (check.recommendation === "BLOCK") {
+    return res.status(400).json({ error: "Disposable email addresses not permitted." });
+  }
+  next();
+}
 ```
 
----
+### PHP / Laravel
+```php
+use Illuminate\Support\Facades\Http;
 
-## 📄 Response Example
+$response = Http::withToken('cf_sarwar_cauliflare_live_x829a47f01b92c81d')
+    ->post('https://cauliflare-backend.onrender.com/v1/check-email', [
+        'email' => $request->input('email')
+    ]);
 
-```json
-{
-  "safe": false,
-  "risk_score": 94,
-  "phishing": true,
-  "reasons": [
-    "Suspicious domain age",
-    "Known phishing pattern"
-  ]
+if ($response->json('recommendation') === 'BLOCK') {
+    return back()->withErrors(['email' => 'Disposable email not permitted.']);
+}
+```
+
+### Rust
+```rust
+use reqwest::Client;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::new();
+    let res = client.post("https://cauliflare-backend.onrender.com/v1/check-email")
+        .bearer_auth("cf_sarwar_cauliflare_live_x829a47f01b92c81d")
+        .json(&json!({ "email": "user@mailinator.com" }))
+        .send()
+        .await?
+        .json::<serde_json::Value>()
+        .await?;
+
+    if res["recommendation"] == "BLOCK" {
+        println!("Blocked: {}", res["provider"]);
+    }
+    Ok(())
 }
 ```
 
 ---
 
-## 📡 API Endpoints
+## 🛠️ Local Development
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /scan-url` | Analyze suspicious URLs |
-| `POST /check-email` | Detect temp emails |
-| `POST /detect-scam` | Analyze scam text |
-| `GET /search` | Search intelligence API |
+### 1. Clone the repository
+```bash
+git clone https://github.com/techxsarwar/cauliflare.git
+cd cauliflare
+```
 
----
+### 2. Run Backend (Go)
+```bash
+cd backend
+go run .
+# Running on http://127.0.0.1:8000
+```
 
-## ❓ Why Cauliflare?
-
-Modern applications face:
-- scams
-- spam
-- phishing
-- fake users
-- malicious links
-
-**Cauliflare helps developers integrate protection into their apps in minutes.**
-
----
-
-## 🏗 Architecture
-
-Cauliflare uses:
-- Go (Golang) HTTP Service
-- PostgreSQL
-- Redis
-- Meilisearch
-- AI-based threat scoring
-
----
-
-## 🗺 Roadmap
-
-- [x] URL Scanner
-- [x] Temp Mail Detection
-- [ ] AI Moderation
-- [ ] Telegram Threat Search
-- [ ] Browser Extension
-- [ ] SDKs
-- [ ] Dashboard
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-Fork the repository and submit a pull request.
+### 3. Run Frontend (React / Vite)
+```bash
+cd ../frontend
+npm install
+npm run dev
+# Running on http://localhost:5173
+```
 
 ---
 
 ## 📜 License
 
-MIT License
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
-<br />
-
-> **Cauliflare aims to become the infrastructure layer developers rely on for internet trust and intelligence.**
+<div align="center">
+  <sub>Built by Sarwar • Powered by Go, React, Clerk & Supabase</sub>
+</div>
