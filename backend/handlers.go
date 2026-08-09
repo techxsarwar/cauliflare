@@ -455,10 +455,10 @@ func handleCodeSnippets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := CodeSnippetsResponse{
-		Python: "import cauliflare\n\ncf = cauliflare.Client(\"cf_sarwar_live_x829a47f01b92c81d\")\n\nresponse = cf.check_email({\n    \"email\": \"user@mailinator.com\"\n})\n\nif response.recommendation == \"BLOCK\":\n    print(f\"Blocked burner mail provider: {response.provider}\")",
-		Node:   "const { Client } = require('cauliflare');\n\nconst cf = new Client('cf_sarwar_live_x829a47f01b92c81d');\n\ncf.checkEmail({\n    email: 'user@mailinator.com'\n}).then(res => {\n    if (res.recommendation === 'BLOCK') {\n        console.log(`Rejecting signup from ${res.provider}`);\n    }\n});",
-		Go:     "import \"github.com/cauliflare/sdk-go\"\n\ncf := cauliflare.NewClient(\"cf_sarwar_live_x829a47f01b92c81d\")\n\nres, err := cf.CheckEmail(ctx, &cauliflare.EmailOpts{\n    Email: \"user@mailinator.com\",\n})\n\nif res.Recommendation == \"BLOCK\" {\n    fmt.Printf(\"Blocked temp mail: %s\\n\", res.Provider)\n}",
-		Curl:   "curl -X POST https://api.cauliflare.in/v1/check-email \\\n  -H \"Authorization: Bearer cf_sarwar_live_x829a47f01b92c81d\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"email\": \"user@mailinator.com\" }'",
+		Python: "import cauliflare\n\ncf = cauliflare.Client(\"cf_sarwar-cauliflare_live_x829a47f01b92c81d\")\n\nresponse = cf.check_email({\n    \"email\": \"user@mailinator.com\"\n})\n\nif response.recommendation == \"BLOCK\":\n    print(f\"Blocked burner mail provider: {response.provider}\")",
+		Node:   "const { Client } = require('cauliflare');\n\nconst cf = new Client('cf_sarwar-cauliflare_live_x829a47f01b92c81d');\n\ncf.checkEmail({\n    email: 'user@mailinator.com'\n}).then(res => {\n    if (res.recommendation === 'BLOCK') {\n        console.log(`Rejecting signup from ${res.provider}`);\n    }\n});",
+		Go:     "import \"github.com/cauliflare/sdk-go\"\n\ncf := cauliflare.NewClient(\"cf_sarwar-cauliflare_live_x829a47f01b92c81d\")\n\nres, err := cf.CheckEmail(ctx, &cauliflare.EmailOpts{\n    Email: \"user@mailinator.com\",\n})\n\nif res.Recommendation == \"BLOCK\" {\n    fmt.Printf(\"Blocked temp mail: %s\\n\", res.Provider)\n}",
+		Curl:   "curl -X POST https://api.cauliflare.in/v1/check-email \\\n  -H \"Authorization: Bearer cf_sarwar-cauliflare_live_x829a47f01b92c81d\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"email\": \"user@mailinator.com\" }'",
 	}
 
 	JSON(w, http.StatusOK, resp)
