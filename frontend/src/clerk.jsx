@@ -33,6 +33,7 @@ export const Show = ({ when, children }) => {
     return <RealShow when={when}>{children}</RealShow>;
   }
   if (when === 'signed-in') return <>{children}</>;
+  if (when === 'signed-out') return <>{children}</>;
   return null;
 };
 
@@ -47,7 +48,7 @@ export const SignedOut = ({ children }) => {
   if (isValidKey) {
     return <RealShow when="signed-out">{children}</RealShow>;
   }
-  return null;
+  return <>{children}</>;
 };
 
 export const SignInButton = (props) => {
@@ -98,9 +99,12 @@ export const RedirectToSignIn = () => {
 export const SignIn = (props) => {
   if (isValidKey) return <RealSignIn {...props} />;
   return (
-    <div style={{ padding: '32px', textAlign: 'center' }}>
-      <h3 className="font-bold font-code-md" style={{ marginBottom: '12px' }}>DEVELOPMENT MODE AUTHENTICATION</h3>
-      <p className="font-body-lg text-on-surface-variant">You are automatically authenticated as Developer in local environment.</p>
+    <div style={{ padding: '24px', textAlign: 'center', backgroundColor: 'var(--surface)' }}>
+      <h3 className="font-bold font-code-md" style={{ marginBottom: '12px', fontSize: '18px' }}>CAULIFLARE DEVELOPER ACCESS</h3>
+      <p className="font-body-lg text-on-surface-variant" style={{ marginBottom: '24px', fontSize: '14px' }}>Local Development Mode Active. You are logged in as Sarwar (Developer).</p>
+      <a href="/dashboard" className="press-button font-label-caps font-bold" style={{ textDecoration: 'none', display: 'inline-block', padding: '10px 20px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)' }}>
+        CONTINUE TO DASHBOARD →
+      </a>
     </div>
   );
 };
