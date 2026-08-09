@@ -4,6 +4,7 @@ import './App.css';
 
 // Components
 import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
@@ -74,8 +75,12 @@ function App() {
           <Route path="/changelog" element={<GenericPage title="Changelog" tag="DEVELOPERS" description="Track API updates and new features." />} />
         </Route>
 
-        {/* DASHBOARD ROUTES */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* DASHBOARD ROUTES — PROTECTED BY CLERK AUTH */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<DashboardIndex />} />
           <Route path="keys" element={<ApiKeysPage />} />
           <Route path="playground" element={<PlaygroundPage />} />

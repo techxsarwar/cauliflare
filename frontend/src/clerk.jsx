@@ -1,22 +1,25 @@
 import React from 'react';
-import { 
-  ClerkProvider as RealClerkProvider, 
-  Show as RealShow, 
-  SignInButton as RealSignInButton, 
-  SignUpButton as RealSignUpButton, 
-  UserButton as RealUserButton, 
-  useUser as realUseUser, 
-  RedirectToSignIn as RealRedirectToSignIn, 
-  SignIn as RealSignIn 
+import {
+  ClerkProvider as RealClerkProvider,
+  Show as RealShow,
+  SignInButton as RealSignInButton,
+  SignUpButton as RealSignUpButton,
+  UserButton as RealUserButton,
+  useUser as realUseUser,
+  useAuth as realUseAuth,
+  RedirectToSignIn as RealRedirectToSignIn,
+  SignIn as RealSignIn,
+  SignUp as RealSignUp
 } from '@clerk/react';
 
 const realKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 const isValidKey = Boolean(
-  realKey && 
-  realKey.length > 20 && 
+  realKey &&
+  realKey.length > 20 &&
   (realKey.startsWith('pk_live_') || realKey.startsWith('pk_test_'))
 );
 
+// --- Provider ---
 export const ClerkProvider = ({ children, afterSignOutUrl = '/', ...props }) => {
   if (isValidKey) {
     return (
@@ -28,29 +31,18 @@ export const ClerkProvider = ({ children, afterSignOutUrl = '/', ...props }) => 
   return <>{children}</>;
 };
 
-export const Show = ({ when, children }) => {
-  if (isValidKey) {
-    return <RealShow when={when}>{children}</RealShow>;
-  }
-  if (when === 'signed-in') return <>{children}</>;
-  if (when === 'signed-out') return <>{children}</>;
-  return null;
-};
-
+// --- Auth state wrappers using Show ---
 export const SignedIn = ({ children }) => {
-  if (isValidKey) {
-    return <RealShow when="signed-in">{children}</RealShow>;
-  }
-  return <>{children}</>;
+  if (isValidKey) return <RealShow when="signed-in">{children}</RealShow>;
+  return null; // Without valid key, treat as not signed in
 };
 
 export const SignedOut = ({ children }) => {
-  if (isValidKey) {
-    return <RealShow when="signed-out">{children}</RealShow>;
-  }
-  return <>{children}</>;
+  if (isValidKey) return <RealShow when="signed-out">{children}</RealShow>;
+  return <>{children}</>; // Without valid key, treat as signed out — show sign-in links
 };
 
+// --- Buttons ---
 export const SignInButton = (props) => {
   if (isValidKey) return <RealSignInButton {...props} />;
   return <button {...props}>Sign In</button>;
@@ -63,48 +55,40 @@ export const SignUpButton = (props) => {
 
 export const UserButton = (props) => {
   if (isValidKey) return <RealUserButton {...props} />;
-  return (
-    <div style={{ 
-      width: '36px', 
-      height: '36px', 
-      backgroundColor: 'var(--on-surface)', 
-      color: '#ffffff', 
-      border: '2px solid var(--on-surface)', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      fontWeight: 'bold', 
-      fontSize: '12px', 
-      cursor: 'pointer' 
-    }} title="Developer Mode (Signed In)">
-      DEV
-    </div>
-  );
-};
-
-export const useUser = () => {
-  if (isValidKey) {
-    try {
-      return realUseUser();
-    } catch (e) {}
-  }
-  return { isLoaded: true, isSignedIn: true, user: { firstName: 'Developer', id: 'dev_123' } };
-};
-
-export const RedirectToSignIn = () => {
-  if (isValidKey) return <RealRedirectToSignIn />;
   return null;
 };
 
+// --- Hooks ---
+export const useUser = () => {
+  if (isValidKey) {
+    try { return realUseUser(); } catch (e) {}
+  }
+  return { isLoaded: true, isSignedIn: false, user: null };
+};
+
+export const useAuth = () => {
+  if (isValidKey) {
+    try { return realUseAuth(); } catch (e) {}
+  }
+  return { isLoaded: true, isSignedIn: false, userId: null };
+};
+
+// --- Redirect ---
+export const RedirectToSignIn = () => {
+  if (isValidKey) return <RealRedirectToSignIn />;
+  if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/sign-in')) {
+    window.location.href = '/sign-in';
+  }
+  return null;
+};
+
+// --- Sign In / Sign Up components ---
 export const SignIn = (props) => {
   if (isValidKey) return <RealSignIn {...props} />;
-  return (
-    <div style={{ padding: '24px', textAlign: 'center', backgroundColor: 'var(--surface)' }}>
-      <h3 className="font-bold font-code-md" style={{ marginBottom: '12px', fontSize: '18px' }}>CAULIFLARE DEVELOPER ACCESS</h3>
-      <p className="font-body-lg text-on-surface-variant" style={{ marginBottom: '24px', fontSize: '14px' }}>Local Development Mode Active. You are logged in as Sarwar (Developer).</p>
-      <a href="/dashboard" className="press-button font-label-caps font-bold" style={{ textDecoration: 'none', display: 'inline-block', padding: '10px 20px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)' }}>
-        CONTINUE TO DASHBOARD →
-      </a>
-    </div>
-  );
+  return null;
+};
+
+export const SignUp = (props) => {
+  if (isValidKey) return <RealSignUp {...props} />;
+  return null;
 };
