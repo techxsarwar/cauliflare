@@ -1,11 +1,38 @@
-import React, { useState } from 'react';
-import { Check, ShieldCheck, Zap, CreditCard, Download, ExternalLink, X, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, ShieldCheck, Zap, CreditCard, Download, ExternalLink, X, ArrowRight, FileText, CheckCircle2 } from 'lucide-react';
 
 const BillingPage = () => {
   const [currentPlan, setCurrentPlan] = useState('Free');
   const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [invoices, setInvoices] = useState([]);
+
+  useEffect(() => {
+    try {
+      const savedPlan = localStorage.getItem('cauliflare_user_plan');
+      if (savedPlan) setCurrentPlan(savedPlan);
+
+      const savedInvoices = localStorage.getItem('cauliflare_user_invoices');
+      if (savedInvoices) {
+        setInvoices(JSON.parse(savedInvoices));
+      } else {
+        // Initial real $0.00 Free Tier Registration Invoice
+        const initialFreeInvoice = [
+          {
+            id: 'INV-FREE-001',
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            plan: 'Free Developer Registration',
+            amount: '$0.00',
+            status: 'ACTIVE'
+          }
+        ];
+        setInvoices(initialFreeInvoice);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -20,9 +47,120 @@ const BillingPage = () => {
 
   const handleCompletePayment = (e) => {
     e.preventDefault();
+    const amount = selectedPlanForCheckout === 'Developer Pro' ? '$29.00' : '$99.00';
+    const now = new Date();
+    const newInvoice = {
+      id: `INV-${Math.floor(100000 + Math.random() * 900000)}`,
+      date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      plan: `${selectedPlanForCheckout} Plan`,
+      amount: amount,
+      status: 'PAID'
+    };
+
+    const updatedInvoices = [newInvoice, ...invoices];
+    setInvoices(updatedInvoices);
     setCurrentPlan(selectedPlanForCheckout);
     setIsCheckoutOpen(false);
-    showToast(`🎉 Successfully upgraded to the ${selectedPlanForCheckout} plan!`);
+
+    try {
+      localStorage.setItem('cauliflare_user_plan', selectedPlanForCheckout);
+      localStorage.setItem('cauliflare_user_invoices', JSON.stringify(updatedInvoices));
+    } catch (err) {}
+
+    showToast(`🎉 Successfully activated ${selectedPlanForCheckout} subscription! Invoice ${newInvoice.id} generated.`);
+  };
+
+  const handleDownloadInvoice = (inv) => {
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${inv.id} - Cauliflare Security</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; background: #ffffff; color: #121212; padding: 40px; margin: 0; }
+          .invoice-box { max-width: 700px; margin: auto; border: 3px solid #121212; padding: 32px; box-shadow: 6px 6px 0px #121212; }
+          .header { display: flex; justify-content: space-between; border-bottom: 2px solid #121212; padding-bottom: 20px; margin-bottom: 20px; }
+          .title { font-size: 26px; font-weight: 900; letter-spacing: -1px; }
+          .badge { display: inline-block; background: #00e676; color: #121212; font-weight: bold; padding: 4px 10px; border: 1px solid #121212; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th { background: #121212; color: #ffffff; text-align: left; padding: 10px 14px; font-size: 12px; }
+          td { padding: 12px 14px; border-bottom: 1px solid #e0e0e0; }
+          .total { font-size: 20px; font-weight: bold; text-align: right; margin-top: 20px; }
+          .footer { margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 16px; }
+        </style>
+      </head>
+      <body>
+        <div class="invoice-box">
+          <div class="header">
+            <div>
+              <div class="title">CAULIFLARE SECURITY</div>
+              <div style="font-size: 13px; color: #555; margin-top: 4px;">Developer Threat Infrastructure & Fraud Defense</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge">${inv.status}</span>
+              <div style="font-size: 14px; font-weight: bold; margin-top: 8px;">${inv.id}</div>
+              <div style="font-size: 12px; color: #666;">Date: ${inv.date}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
+            <div>
+              <strong>Billed To:</strong><br>
+              Cauliflare Developer Account<br>
+              Account ID: cf_sarwar_live<br>
+              API Environment: Production Live
+            </div>
+            <div style="text-align: right;">
+              <strong>Payment Method:</strong><br>
+              Stripe Verified Gateway<br>
+              Card ending in •••• 4242<br>
+              Currency: USD ($)
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>DESCRIPTION</th>
+                <th>PERIOD</th>
+                <th>RATE</th>
+                <th style="text-align: right;">AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>${inv.plan}</strong><br><span style="font-size: 11px; color: #666;">Sub-10ms Threat APIs, Disposable Mail Scanner, Real-time Webhooks</span></td>
+                <td>1 Month</td>
+                <td>${inv.amount}</td>
+                <td style="text-align: right;"><strong>${inv.amount}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total">Total Paid: ${inv.amount}</div>
+
+          <div class="footer">
+            Thank you for building with Cauliflare Security Infrastructure.<br>
+            For support or questions regarding this invoice, contact security@cauliflare.in
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, '_blank');
+    if (win) {
+      win.focus();
+    } else {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `cauliflare_${inv.id}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const plans = [
@@ -33,10 +171,11 @@ const BillingPage = () => {
       description: 'Ideal for prototyping, personal side projects, and local development testing.',
       limit: '10,000 requests / mo',
       features: [
-        '74,697+ GitHub Disposable Email Signatures',
+        '75,000+ GitHub & Multi-source Disposable Email Signatures',
+        'Live Web Threat Sniffer & Typo Engine',
         'Phishing URL & Malware Scanner',
         'Scam Text Detection Engine',
-        'In-App API Playground',
+        'In-App API Playground & Embed SDK',
         '100 req / sec rate limit'
       ],
       cta: 'Current Plan',
@@ -77,12 +216,6 @@ const BillingPage = () => {
       cta: currentPlan === 'Enterprise Scale' ? 'Current Plan' : 'Upgrade to Enterprise Scale',
       isCurrent: currentPlan === 'Enterprise Scale'
     }
-  ];
-
-  const invoices = [
-    { id: 'INV-2026-0501', date: 'May 1, 2026', amount: '$29.00', status: 'PAID', plan: 'Developer Pro Plan' },
-    { id: 'INV-2026-0401', date: 'Apr 1, 2026', amount: '$29.00', status: 'PAID', plan: 'Developer Pro Plan' },
-    { id: 'INV-2026-0301', date: 'Mar 1, 2026', amount: '$29.00', status: 'PAID', plan: 'Developer Pro Plan' }
   ];
 
   return (
@@ -190,7 +323,7 @@ const BillingPage = () => {
       <section>
         <h1 className="font-display-xl" style={{ fontSize: '36px', marginBottom: '8px' }}>Subscription & Billing</h1>
         <p className="font-body-lg text-on-surface-variant" style={{ fontWeight: '600' }}>
-          Manage your enterprise subscription tiers, monthly request allowances, and payment methods.
+          Manage your subscription tiers, monthly request limits, and official payment receipts.
         </p>
       </section>
 
@@ -261,12 +394,23 @@ const BillingPage = () => {
         ))}
       </section>
 
-      {/* INVOICES & PAYMENT HISTORY */}
-      <section style={{ border: '2px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
+      {/* INVOICES & PAYMENT RECEIPTS */}
+      <section style={{ border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)' }}>
         <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--on-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 className="font-label-caps" style={{ fontWeight: 'bold' }}>BILLING RECEIPTS & INVOICE HISTORY</h2>
-          <span className="font-code-md text-on-surface-variant" style={{ fontSize: '12px' }}>Stripe Verified Customer Portal</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FileText size={20} color="var(--primary)" />
+            <h2 className="font-label-caps" style={{ fontWeight: 'bold' }}>OFFICIAL BILLING RECEIPTS & INVOICE HISTORY</h2>
+          </div>
+          <span className="font-code-md text-on-surface-variant" style={{ fontSize: '12px' }}>Stripe Customer Billing Ledger</span>
         </div>
+
+        {currentPlan === 'Free' && invoices.length <= 1 && (
+          <div style={{ padding: '16px 24px', backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--outline-variant)' }}>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', margin: 0 }}>
+              💡 <strong>Free Tier Active:</strong> You are currently using the Free Developer tier ($0.00 / mo). When you upgrade to Developer Pro or Enterprise Scale, your official paid receipts and tax invoices will generate here automatically.
+            </p>
+          </div>
+        )}
 
         <div style={{ padding: '0', overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'var(--surface)' }} className="font-code-md">
@@ -274,7 +418,7 @@ const BillingPage = () => {
               <tr style={{ backgroundColor: 'var(--on-surface)', color: 'var(--surface)', textAlign: 'left' }}>
                 <th style={{ padding: '12px 20px', fontSize: '12px' }}>INVOICE ID</th>
                 <th style={{ padding: '12px 20px', fontSize: '12px' }}>DATE</th>
-                <th style={{ padding: '12px 20px', fontSize: '12px' }}>PLAN</th>
+                <th style={{ padding: '12px 20px', fontSize: '12px' }}>PLAN DESCRIPTION</th>
                 <th style={{ padding: '12px 20px', fontSize: '12px' }}>AMOUNT</th>
                 <th style={{ padding: '12px 20px', fontSize: '12px' }}>STATUS</th>
                 <th style={{ padding: '12px 20px', fontSize: '12px', textAlign: 'right' }}>ACTION</th>
@@ -294,10 +438,11 @@ const BillingPage = () => {
                   </td>
                   <td style={{ padding: '14px 20px', textAlign: 'right' }}>
                     <button 
-                      onClick={() => showToast(`Downloaded invoice receipt ${inv.id}`)}
-                      style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                      onClick={() => handleDownloadInvoice(inv)}
+                      className="press-button font-label-caps"
+                      style={{ background: 'var(--surface-container)', border: '1px solid var(--on-surface)', padding: '4px 10px', color: 'var(--on-surface)', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}
                     >
-                      <Download size={14} /> PDF
+                      <Download size={13} /> VIEW RECEIPT
                     </button>
                   </td>
                 </tr>
