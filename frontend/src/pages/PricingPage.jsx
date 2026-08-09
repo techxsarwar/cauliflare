@@ -12,7 +12,7 @@ const PricingPage = () => {
   };
 
   return (
-    <div style={{ padding: '60px 0 96px 0', display: 'flex', flexDirection: 'column', gap: '64px' }}>
+    <div style={{ padding: '120px 24px 96px 24px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '64px', width: '100%' }}>
       
       {/* 1. HERO HEADER */}
       <section style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>

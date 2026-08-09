@@ -34,7 +34,7 @@ const StatusPage = () => {
   ];
 
   return (
-    <div style={{ padding: '40px 0 96px 0', display: 'flex', flexDirection: 'column', gap: '48px' }}>
+    <div style={{ padding: '120px 24px 96px 24px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '48px', width: '100%' }}>
       
       {/* 1. STATUS BANNER */}
       <section style={{ 
