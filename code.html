@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CAULIFLARE | Elite Developer Infrastructure</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Hanken+Grotesk:wght@400;500;700&amp;family=Archivo+Narrow:wght@700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#00210f",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary-container": "#bab49e",
+                        "tertiary": "#333020",
+                        "secondary-container": "#fe7a48",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-primary-container": "#90be9c",
+                        "tertiary-container": "#4a4635",
+                        "primary": "#09371e",
+                        "outline-variant": "#c1c9c0",
+                        "surface-dim": "#dcd9d9",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#eae7e7",
+                        "secondary-fixed": "#ffdbcf",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#a2d2ae",
+                        "surface": "#fcf9f8",
+                        "surface-container": "#f0eded",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#414942",
+                        "primary-container": "#234e33",
+                        "background": "#fcf9f8",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#380d00",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e9e2cb",
+                        "on-surface": "#1c1b1b",
+                        "on-tertiary-fixed-variant": "#4b4736",
+                        "primary-fixed-dim": "#a2d2ae",
+                        "on-tertiary-fixed": "#1e1c0d",
+                        "surface-variant": "#e5e2e1",
+                        "on-secondary-container": "#671e00",
+                        "on-primary": "#ffffff",
+                        "outline": "#1c1b1b",
+                        "tertiary-fixed-dim": "#cdc6b0",
+                        "on-secondary-fixed-variant": "#812800",
+                        "surface-tint": "#3c674a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fcf9f8",
+                        "primary-fixed": "#beeec9",
+                        "secondary-fixed-dim": "#ffb59b",
+                        "on-background": "#1c1b1b",
+                        "on-primary-fixed-variant": "#244f34",
+                        "secondary": "#a63b0a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "stack-lg": "48px",
+                        "stack-md": "24px",
+                        "stack-sm": "8px",
+                        "gutter": "24px",
+                        "margin": "32px",
+                        "container-max": "1440px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Archivo Narrow"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-xl": ["Anton"],
+                        "headline-lg": ["Anton"],
+                        "headline-md": ["Anton"],
+                        "code-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "160%", "fontWeight": "500"}],
+                        "label-caps": ["14px", {"lineHeight": "120%", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "150%", "fontWeight": "400"}],
+                        "display-xl": ["96px", {"lineHeight": "100%", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "110%", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "120%", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+            overflow-x: hidden;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .press-border {
+            border: 2px solid #1c1b1b;
+        }
+        .press-border-lg {
+            border: 4px solid #1c1b1b;
+        }
+        .press-button {
+            position: relative;
+            background-color: #a63b0a;
+            color: #ffffff;
+            border: 2px solid #1c1b1b;
+            transition: all 0.1s ease;
+        }
+        .press-button::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 100%;
+            height: 100%;
+            background-color: #1c1b1b;
+            z-index: -1;
+            transition: all 0.1s ease;
+        }
+        .press-button:active {
+            transform: translate(2px, 2px);
+        }
+        .press-button:active::after {
+            top: 0px;
+            left: 0px;
+        }
+        .press-button-secondary {
+            background-color: transparent;
+            color: #1c1b1b;
+            border: 2px solid #1c1b1b;
+        }
+        .press-button-secondary::after {
+            background-color: #1c1b1b;
+            opacity: 0.1;
+        }
+
+        .dot-grid {
+            background-image: radial-gradient(#1c1b1b 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+
+        .typewriter::after {
+            content: "|";
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { color: transparent; }
+            50% { color: #a63b0a; }
+        }
+
+        nav {
+            transition: all 0.3s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-body-md bg-surface text-on-surface">
+<!-- TopNavBar Component -->
+<nav class="sticky top-0 z-50 bg-surface border-b-4 border-on-surface flex justify-between items-center w-full px-margin py-unit h-20">
+<div class="flex items-center gap-8">
+<span class="font-display-xl text-headline-md tracking-tighter text-primary uppercase">CAULIFLARE</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors duration-100 px-2 py-1" href="#">REPORTS</a>
+<a class="font-label-caps text-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors duration-100 px-2 py-1" href="#">ARCHIVE</a>
+<a class="font-label-caps text-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors duration-100 px-2 py-1" href="#">MANIFESTO</a>
+<a class="font-label-caps text-label-caps text-on-surface hover:bg-primary hover:text-on-primary transition-colors duration-100 px-2 py-1" href="#">EDITIONS</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="press-button font-label-caps text-label-caps px-6 py-2 uppercase font-bold active:translate-y-0.5">
+            SUBSCRIBE
+        </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-margin-desktop py-stack-lg overflow-hidden border-b-4 border-on-surface">
+<div class="absolute inset-0 -z-10 dot-grid"></div>
+<div class="max-w-5xl space-y-8 relative z-10">
+<h1 class="font-display-xl text-display-xl tracking-tighter text-on-surface uppercase leading-[0.9]">
+            The Internet Runs on <br/>Infrastructure. <br/>
+<span class="text-secondary">Yours Should Too.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto border-l-4 border-primary pl-6 py-2">
+            High-performance APIs for real-time scam detection, global search, and mail validation. Built for developers who demand sub-100ms latency and 99.99% reliability.
+        </p>
+<div class="flex flex-wrap justify-center gap-8 pt-4">
+<button class="press-button font-label-caps text-label-caps px-10 py-5 text-xl uppercase font-bold">
+                Start Building →
+            </button>
+<button class="press-button press-button-secondary font-label-caps text-label-caps px-10 py-5 text-xl uppercase font-bold">
+                Read the Docs
+            </button>
+</div>
+</div>
+<!-- Terminal Block Hero -->
+<div class="mt-20 w-full max-w-3xl press-border-lg bg-surface-container-lowest overflow-hidden relative z-10">
+<div class="bg-on-surface px-4 py-2 flex items-center gap-2 border-b-2 border-on-surface">
+<div class="flex gap-1.5">
+<div class="w-3 h-3 rounded-full bg-error"></div>
+<div class="w-3 h-3 rounded-full bg-secondary-container"></div>
+<div class="w-3 h-3 rounded-full bg-primary-container"></div>
+</div>
+<span class="font-code-md text-sm text-surface ml-4 font-bold uppercase tracking-widest">api_test_v4.sh</span>
+</div>
+<div class="p-8 font-code-md text-code-md text-left space-y-3 overflow-x-auto bg-surface-container-low text-on-surface">
+<div class="flex gap-4">
+<span class="text-secondary font-bold">$</span>
+<span class="text-on-surface">curl -X POST https://api.cauliflare.com/v1/scan \</span>
+</div>
+<div class="flex gap-4">
+<span class="opacity-0">$</span>
+<span class="text-on-surface-variant">-H "Authorization: Bearer CAULI_••••••••" \</span>
+</div>
+<div class="flex gap-4">
+<span class="opacity-0">$</span>
+<span class="text-on-surface-variant">-d '{ "url": "https://secure-gate.io/auth" }'</span>
+</div>
+<div class="pt-4 text-primary font-bold typewriter">
+                # Processing threat intelligence nodes...
+            </div>
+<div class="pt-2 text-primary-container p-4 bg-primary/10 border-l-4 border-primary">
+                { "status": "malicious", "confidence": 0.998, "threat_type": "phishing", "latency_ms": 42 }
+            </div>
+</div>
+</div>
+</section>
+<!-- Metrics Bar -->
+<section class="bg-primary text-on-primary border-b-4 border-on-surface">
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x-4 divide-on-surface">
+<div class="p-12 flex flex-col items-center justify-center space-y-4">
+<span class="font-display-xl text-6xl text-secondary-fixed metric-count" data-suffix="B" data-target="2.4">0B</span>
+<span class="font-label-caps text-label-caps tracking-[0.2em] opacity-80">API REQUESTS / MO</span>
+</div>
+<div class="p-12 flex flex-col items-center justify-center space-y-4">
+<span class="font-display-xl text-6xl text-secondary-fixed metric-count" data-suffix="%" data-target="99.99">0%</span>
+<span class="font-label-caps text-label-caps tracking-[0.2em] opacity-80">UPTIME SLA</span>
+</div>
+<div class="p-12 flex flex-col items-center justify-center space-y-4">
+<span class="font-display-xl text-6xl text-secondary-fixed metric-count" data-prefix="&lt;" data-suffix="ms" data-target="120">0ms</span>
+<span class="font-label-caps text-label-caps tracking-[0.2em] opacity-80">GLOBAL P95 LATENCY</span>
+</div>
+</div>
+</section>
+<!-- Feature Grid -->
+<section class="py-stack-lg px-margin-desktop max-w-container-max mx-auto border-b-4 border-on-surface">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-on-surface press-border-lg">
+<!-- Scam Detection -->
+<div class="p-12 bg-surface hover:bg-surface-container-low transition-colors group relative overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-14 h-14 bg-primary text-on-primary flex items-center justify-center border-2 border-on-surface">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<h3 class="font-headline-md text-headline-md uppercase">Scam Detection API</h3>
+</div>
+<p class="text-on-surface-variant font-body-lg mb-10 leading-relaxed">
+                Predictive analysis engine that identifies fraudulent domains and patterns before they reach your users. 
+            </p>
+<div class="press-border bg-on-primary-fixed p-6 font-code-md text-sm text-primary-fixed">
+<span class="text-on-tertiary-container">risk_score:</span> <span class="text-secondary-fixed">0.94</span>,<br/>
+<span class="text-on-tertiary-container">flags:</span> ["DGA_DETECTED", "SUSPICIOUS_REGISTRAR"]
+            </div>
+</div>
+<!-- Search Anything -->
+<div class="p-12 bg-surface hover:bg-surface-container-low transition-colors group relative overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-14 h-14 bg-secondary text-on-secondary flex items-center justify-center border-2 border-on-surface">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">search</span>
+</div>
+<h3 class="font-headline-md text-headline-md uppercase">Search Anything API</h3>
+</div>
+<p class="text-on-surface-variant font-body-lg mb-10 leading-relaxed">
+                Ultra-fast semantic search across decentralized datasets with vector-optimized results and filtering.
+            </p>
+<div class="press-border bg-on-primary-fixed p-6 font-code-md text-sm text-primary-fixed">
+<span class="text-on-tertiary-container">query:</span> "infrastructure as code",<br/>
+<span class="text-on-tertiary-container">matches:</span> 1,402 <span class="text-on-tertiary-container">time_ms:</span> 8
+            </div>
+</div>
+<!-- Temp Mail -->
+<div class="p-12 bg-surface hover:bg-surface-container-low transition-colors group relative overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-14 h-14 bg-primary text-on-primary flex items-center justify-center border-2 border-on-surface">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">mail</span>
+</div>
+<h3 class="font-headline-md text-headline-md uppercase">Temp Mail Detection</h3>
+</div>
+<p class="text-on-surface-variant font-body-lg mb-10 leading-relaxed">
+                Prevent burner account spam by detecting temporary email providers in real-time with zero false positives.
+            </p>
+<div class="press-border bg-on-primary-fixed p-6 font-code-md text-sm text-primary-fixed">
+<span class="text-on-tertiary-container">provider:</span> "guerrillamail.com",<br/>
+<span class="text-on-tertiary-container">is_disposable:</span> <span class="text-error">true</span>
+</div>
+</div>
+<!-- URL Intelligence -->
+<div class="p-12 bg-surface hover:bg-surface-container-low transition-colors group relative overflow-hidden">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-14 h-14 bg-secondary text-on-secondary flex items-center justify-center border-2 border-on-surface">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">language</span>
+</div>
+<h3 class="font-headline-md text-headline-md uppercase">URL Threat Intelligence</h3>
+</div>
+<p class="text-on-surface-variant font-body-lg mb-10 leading-relaxed">
+                Full-spectrum URL analysis including metadata extraction, screenshot previews, and script sandboxing.
+            </p>
+<div class="press-border bg-on-primary-fixed p-6 font-code-md text-sm text-primary-fixed">
+<span class="text-on-tertiary-container">final_url:</span> "https://cl.fl/login",<br/>
+<span class="text-on-tertiary-container">redirects:</span> 3, <span class="text-on-tertiary-container">scripts:</span> 12
+            </div>
+</div>
+</div>
+</section>
+<!-- Network Global Section -->
+<section class="py-stack-lg bg-surface-container-low overflow-hidden border-b-4 border-on-surface">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col lg:flex-row items-center gap-24">
+<div class="lg:w-1/2 space-y-8">
+<span class="font-label-caps text-label-caps text-secondary uppercase bg-on-surface text-surface px-4 py-1">GLOBAL EDGE NETWORK</span>
+<h2 class="font-display-xl text-headline-lg tracking-tight uppercase leading-none">Built for a <br/>Borderless Web.</h2>
+<p class="text-on-surface font-body-lg border-l-4 border-on-surface pl-8 italic">
+                Our API gateway is distributed across 6 core regions and 120+ edge points. We route your requests through the shortest path possible, ensuring consistent performance from New York to Tokyo.
+            </p>
+<ul class="space-y-6 font-label-caps text-lg uppercase tracking-wide">
+<li class="flex items-center gap-4">
+<span class="w-4 h-4 bg-primary border-2 border-on-surface"></span>
+                    North America (LGA-1, ORD-2)
+                </li>
+<li class="flex items-center gap-4">
+<span class="w-4 h-4 bg-primary border-2 border-on-surface"></span>
+                    Europe (FRA-1, LDN-2, AMS-1)
+                </li>
+<li class="flex items-center gap-4">
+<span class="w-4 h-4 bg-primary border-2 border-on-surface"></span>
+                    Asia-Pacific (TYO-1, SIN-2, SYD-1)
+                </li>
+</ul>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="relative w-full aspect-square press-border-lg bg-surface-container-lowest p-8 overflow-hidden flex items-center justify-center">
+<img class="absolute inset-0 w-full h-full object-cover opacity-10 grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALQZlHY0z1Uy9-iGHSaa_J1oCvTlEsdnq80Ixi7m8-zzG9-iTemsh0eTm1AlQ8pJKsJ2wzL0rJ-Z1IYrxa5t-SHrE-lzggLmaf1fKz2mgTXGUCdEgF45bE_baSLKcpvcKQLGHzKsMrdCuvYUPiI6O6LVzqPjWNAKnzisO16kMtaceeTXKyqyFHk4mBclNCPlxk-81joq5nq3gkRA8xyku-9aCgWGv3QI3SgiCMwsByFzdxV9b6vr7-uaK8P4ns43-2ttq94Q4Tqac"/>
+<!-- Square Nodes -->
+<div class="absolute top-1/3 left-1/4 w-5 h-5 bg-secondary border-2 border-on-surface shadow-[4px_4px_0px_#1c1b1b]"></div>
+<div class="absolute top-1/4 left-1/2 w-4 h-4 bg-primary border-2 border-on-surface shadow-[4px_4px_0px_#1c1b1b]"></div>
+<div class="absolute top-1/2 left-[80%] w-5 h-5 bg-secondary border-2 border-on-surface shadow-[4px_4px_0px_#1c1b1b]"></div>
+<div class="absolute top-[60%] left-[10%] w-4 h-4 bg-primary border-2 border-on-surface shadow-[4px_4px_0px_#1c1b1b]"></div>
+<div class="absolute bottom-8 right-8 bg-on-surface text-surface px-4 py-2 font-label-caps text-xs">
+                    STATUS: ALL NODES OPERATIONAL
+                </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Code Request/Response Section -->
+<section class="py-stack-lg px-margin-desktop bg-surface">
+<div class="max-w-container-max mx-auto space-y-16">
+<div class="text-center space-y-6">
+<h2 class="font-display-xl text-display-xl uppercase">Integrate in Minutes.</h2>
+<div class="flex justify-center gap-4" id="code-tabs">
+<button class="code-tab-btn press-border bg-on-surface text-surface font-label-caps px-8 py-3 uppercase font-bold" data-lang="python">Python</button>
+<button class="code-tab-btn press-border bg-transparent text-on-surface font-label-caps px-8 py-3 hover:bg-surface-container-low transition-all uppercase font-bold" data-lang="node">Node.js</button>
+<button class="code-tab-btn press-border bg-transparent text-on-surface font-label-caps px-8 py-3 hover:bg-surface-container-low transition-all uppercase font-bold" data-lang="go">Go</button>
+<button class="code-tab-btn press-border bg-transparent text-on-surface font-label-caps px-8 py-3 hover:bg-surface-container-low transition-all uppercase font-bold" data-lang="curl">cURL</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 press-border-lg overflow-hidden divide-x-4 divide-on-surface shadow-[12px_12px_0px_#1c1b1b]">
+<!-- Request Panel -->
+<div class="bg-surface-container-low p-10 space-y-8">
+<span class="font-label-caps text-sm text-on-surface uppercase tracking-[0.3em] font-bold border-b-2 border-on-surface pb-1">Client Request</span>
+<div id="code-display-request">
+<pre class="font-code-md text-code-md leading-relaxed text-on-surface"><span class="text-secondary font-bold">import</span> cauliflare\n\ncf = cauliflare.Client(<span class="text-primary-container">"API_KEY"</span>)\n\nresponse = cf.scan_url({\n    <span class="text-primary-container">"url"</span>: <span class="text-primary-container">"https://bit.ly/3x8f1z"</span>,\n    <span class="text-primary-container">"follow_redirects"</span>: <span class="font-bold">True</span>,\n    <span class="text-primary-container">"deep_scan"</span>: <span class="font-bold">True</span>\n})\n\n<span class="text-secondary font-bold">print</span>(response.threat_status)</pre>
+</div>
+</div>
+<!-- Response Panel -->
+<div class="bg-on-primary-fixed p-10 space-y-8">
+<span class="font-label-caps text-sm text-primary-fixed uppercase tracking-[0.3em] font-bold border-b-2 border-primary-fixed pb-1">API Response</span>
+<pre class="font-code-md text-code-md leading-relaxed text-primary-fixed">{
+  <span class="text-secondary-fixed-dim">"id"</span>: <span class="text-secondary-fixed-dim">"scan_92jK281"</span>,
+  <span class="text-secondary-fixed-dim">"timestamp"</span>: <span class="text-surface">"2025-05-24T12:04:12Z"</span>,
+  <span class="text-secondary-fixed-dim">"threat_level"</span>: <span class="text-secondary-fixed-dim">"critical"</span>,
+  <span class="text-secondary-fixed-dim">"malicious"</span>: <span class="text-error">true</span>,
+  <span class="text-secondary-fixed-dim">"evidence"</span>: {
+    <span class="text-secondary-fixed-dim">"engine"</span>: <span class="text-secondary-fixed-dim">"CF_VULN_V4"</span>,
+    <span class="text-secondary-fixed-dim">"matches"</span>: [<span class="text-secondary-fixed-dim">"JS_CRYPTO_MINER"</span>]
+  },
+  <span class="text-secondary-fixed-dim">"execution_time"</span>: <span class="text-secondary-fixed">"0.082s"</span>
+}</pre>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Component -->
+<footer class="bg-on-primary-fixed border-t-4 border-on-surface">
+<div class="w-full flex flex-col md:flex-row justify-between items-center px-margin py-stack-md gap-stack-sm">
+<div class="space-y-4">
+<span class="font-display-xl text-headline-lg text-primary-fixed uppercase tracking-tighter">CAULIFLARE</span>
+<p class="font-label-caps text-label-caps text-surface-container-highest opacity-80 max-w-sm">
+                ENTERPRISE-GRADE INFRASTRUCTURE FOR THE MODERN DEVELOPER. SPEED IS A FEATURE.
+            </p>
+</div>
+<div class="flex flex-wrap justify-center gap-12">
+<div class="flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-primary-fixed font-bold border-b-2 border-primary-fixed mb-2">PAGES</span>
+<a class="font-label-caps text-label-caps text-surface-container-highest opacity-80 hover:text-secondary-fixed transition-colors" href="#">PRIVACY</a>
+<a class="font-label-caps text-label-caps text-surface-container-highest opacity-80 hover:text-secondary-fixed transition-colors" href="#">TERMS</a>
+<a class="font-label-caps text-label-caps text-surface-container-highest opacity-80 hover:text-secondary-fixed transition-colors" href="#">ADVERTISE</a>
+<a class="font-label-caps text-label-caps text-surface-container-highest opacity-80 hover:text-secondary-fixed transition-colors" href="#">CONTACT</a>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin py-8 border-t-2 border-surface-container-highest/20 flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="font-label-caps text-xs text-primary-fixed/60">© 2024 CAULIFLARE PRESS. ALL RIGHTS RESERVED. NO PERMISSION GRANTED.</span>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer hover:text-secondary-fixed transition-colors">terminal</span>
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer hover:text-secondary-fixed transition-colors">code</span>
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer hover:text-secondary-fixed transition-colors">public</span>
+</div>
+</div>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Metrics Count Up Animation
+        const metrics = document.querySelectorAll('.metric-count');
+        const observerOptions = { threshold: 0.5 };
+        
+        const countUp = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseFloat(el.dataset.target);
+                    const suffix = el.dataset.suffix || '';
+                    const prefix = el.dataset.prefix || '';
+                    let current = 0;
+                    const duration = 1500;
+                    const step = target / (duration / 16);
+
+                    const update = () => {
+                        current += step;
+                        if (current < target) {
+                            el.innerText = `${prefix}${current.toFixed(target % 1 === 0 ? 0 : 2)}${suffix}`;
+                            requestAnimationFrame(update);
+                        } else {
+                            el.innerText = `${prefix}${target}${suffix}`;
+                        }
+                    };
+                    update();
+                    observer.unobserve(el);
+                }
+            });
+        };
+
+        const metricObserver = new IntersectionObserver(countUp, observerOptions);
+        metrics.forEach(m => metricObserver.observe(m));
+
+        // Code Tab Switching
+        const codeSnippets = {
+            python: `<pre class="font-code-md text-code-md leading-relaxed text-on-surface"><span class="text-secondary font-bold">import</span> cauliflare\n\ncf = cauliflare.Client(<span class="text-primary-container">"API_KEY"</span>)\n\nresponse = cf.scan_url({\n    <span class="text-primary-container">"url"</span>: <span class="text-primary-container">"https://bit.ly/3x8f1z"</span>,\n    <span class="text-primary-container">"follow_redirects"</span>: <span class="font-bold">True</span>,\n    <span class="text-primary-container">"deep_scan"</span>: <span class="font-bold">True</span>\n})\n\n<span class="text-secondary font-bold">print</span>(response.threat_status)</pre>`,
+            node: `<pre class="font-code-md text-code-md leading-relaxed text-on-surface"><span class="text-secondary font-bold">const</span> { Client } = <span class="text-secondary">require</span>(<span class="text-primary-container">'cauliflare'</span>);\n\n<span class="text-secondary font-bold">const</span> cf = <span class="text-secondary font-bold">new</span> Client(<span class="text-primary-container">'API_KEY'</span>);\n\ncf.scanUrl({\n    url: <span class="text-primary-container">'https://bit.ly/3x8f1z'</span>,\n    deepScan: <span class="font-bold">true</span>\n}).then(<span class="text-secondary">res</span> => {\n    console.log(res.threat_status);\n});</pre>`,
+            go: `<pre class="font-code-md text-code-md leading-relaxed text-on-surface"><span class="text-secondary font-bold">import</span> <span class="text-primary-container">"github.com/cauliflare/sdk-go"</span>\n\ncf := cauliflare.NewClient(<span class="text-primary-container">"API_KEY"</span>)\n\nres, err := cf.ScanURL(ctx, &cauliflare.ScanOpts{\n    URL: <span class="text-primary-container">"https://bit.ly/3x8f1z"</span>,\n    Deep: <span class="font-bold">true</span>,\n})\n\nfmt.Println(res.ThreatStatus)</pre>`,
+            curl: `<pre class="font-code-md text-code-md leading-relaxed text-on-surface"><span class="text-secondary font-bold">curl</span> -X POST https://api.cauliflare.com/v1/scan \\\n  -H <span class="text-primary-container">"Authorization: Bearer YOUR_API_KEY"</span> \\\n  -d <span class="text-primary-container">'{ "url": "https://bit.ly/3x8f1z" }'</span></pre>`
+        };
+
+        const tabBtns = document.querySelectorAll('.code-tab-btn');
+        const codeDisplay = document.getElementById('code-display-request');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => {
+                    b.classList.remove('bg-on-surface', 'text-surface');
+                    b.classList.add('bg-transparent', 'text-on-surface');
+                });
+                btn.classList.add('bg-on-surface', 'text-surface');
+                btn.classList.remove('bg-transparent', 'text-on-surface');
+
+                codeDisplay.style.opacity = '0';
+                setTimeout(() => {
+                    codeDisplay.innerHTML = codeSnippets[btn.dataset.lang];
+                    codeDisplay.style.opacity = '1';
+                }, 100);
+            });
+        });
+        codeDisplay.style.transition = 'opacity 0.1s ease';
+    });
+</script>
+</body></html>
