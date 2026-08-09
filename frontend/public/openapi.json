@@ -1,0 +1,160 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cauliflare Threat Intelligence API",
+    "version": "1.0.0",
+    "description": "Developer-first, sub-10ms security infrastructure APIs for disposable email blocking, phishing URL scanning, scam text detection, and IP/VPN reputation."
+  },
+  "servers": [
+    {
+      "url": "https://cauliflare-backend.onrender.com",
+      "description": "Production Cloud Anycast API"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "cf_sarwar_cauliflare_live_..."
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/check-email": {
+      "post": {
+        "summary": "Detect Disposable / Temp Email",
+        "description": "Evaluates email addresses against 74,697+ synced threat signatures.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "user@mailinator.com" }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email Threat Classification Result"
+          }
+        }
+      }
+    },
+    "/v1/scan-url": {
+      "post": {
+        "summary": "Scan URL for Phishing & Malware",
+        "description": "Analyzes redirect chains, SSL heuristics, and credential harvesting patterns.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": { "type": "string", "example": "https://bit.ly/login-verify-account" }
+                },
+                "required": ["url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "URL Threat Classification Result"
+          }
+        }
+      }
+    },
+    "/v1/detect-scam": {
+      "post": {
+        "summary": "Detect Social Engineering & Scam Text",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": { "type": "string", "example": "Your account is suspended! Send OTP now." }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Scam Analysis Result"
+          }
+        }
+      }
+    },
+    "/v1/check-ip": {
+      "post": {
+        "summary": "Check IP Reputation, Datacenter & VPN",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ip": { "type": "string", "example": "185.220.101.5" }
+                },
+                "required": ["ip"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "IP Reputation Analysis"
+          }
+        }
+      }
+    },
+    "/v1/batch-check-email": {
+      "post": {
+        "summary": "Batch Scan Multiple Emails (Up to 1,000)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emails": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["user@mailinator.com", "sarwar@cauliflare.in"]
+                  }
+                },
+                "required": ["emails"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch Clean & Threat Summary"
+          }
+        }
+      }
+    }
+  }
+}

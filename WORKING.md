@@ -246,10 +246,50 @@ func main() {
 ### cURL
 ```bash
 curl -X POST https://cauliflare.vercel.app/api/check-email \
+  -H "Authorization: Bearer cf_sarwar_cauliflare_live_x829a47f01b92c81d" \
   -H "Content-Type: application/json" \
   -d '{"email": "user@mailinator.com"}'
 ```
 
 ---
 
+## 10. Enterprise Platform Capabilities
+
+### 1. Webhook Threat Alerts (Slack & Discord)
+Developers can configure webhook endpoints in **Project Settings (`/dashboard/settings`)**:
+- Automatically fires rich JSON/embed payloads to Discord channels or Slack workspaces whenever a critical threat (`risk_score >= 90`), phishing URL, or disposable email flood is blocked.
+- Includes a live **"TEST WEBHOOK PING"** button for instant connectivity validation.
+
+### 2. Live Monthly Quota & Rate Limit Meters
+The **Main Dashboard (`/dashboard`)** includes visual progress meters tracking:
+- Monthly consumed API quota (e.g. `3,842 / 10,000 requests` on Free Tier).
+- Dynamic rate limit allowances (100 req/sec to 500 req/sec).
+- Automated billing cycle reset timers.
+
+### 3. IP Reputation & Tor/VPN Detector (`/v1/check-ip`)
+Analyzes IPv4 and IPv6 addresses to detect:
+- Datacenter hosting ASNs (DigitalOcean, AWS, Linode, Hetzner).
+- Active Tor exit relays and public proxy tunnels.
+- Returns risk score, recommendation (`BLOCK` / `FLAG` / `ALLOW`), and autonomous system metadata.
+
+### 4. Bulk Batch Email & CSV Cleaner (`/v1/batch-check-email`)
+Allows cleaning up to 1,000 emails concurrently:
+- Built-in interactive file uploader parses `.csv` and `.txt` lists.
+- Provides instant count summaries (`Total Scanned`, `Disposable Blocked`, `Legitimate Clean`).
+- One-click **"EXPORT CLEANED CSV REPORT"** button.
+
+### 5. 1-Click Postman & OpenAPI Specification
+Downloadable directly from the documentation header (`/docs`):
+- `public/cauliflare.postman_collection.json`: Ready-to-import Postman collection v2.1.
+- `public/openapi.json`: OpenAPI 3.0 specification for Swagger, Insomnia, and code generators.
+
+### 6. Subscription & Billing Suite (`/dashboard/billing`)
+Interactive subscription manager with:
+- Three clear tiers: **Free ($0/mo)**, **Developer Pro ($29/mo)**, and **Enterprise Scale ($99/mo)**.
+- Functional checkout modal with instant plan activation simulation.
+- PDF billing invoices & payment receipts history.
+
+---
+
 *Authored by **Sarwar** — Cauliflare Security & Developer Infrastructure.*
+

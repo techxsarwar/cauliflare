@@ -1,0 +1,154 @@
+{
+  "info": {
+    "name": "Cauliflare Threat Intelligence API",
+    "_postman_id": "cauliflare-v1-api-collection",
+    "description": "Comprehensive Postman collection for Cauliflare's high-speed threat intelligence and security infrastructure endpoints (Disposable Email Blocker, Phishing URL Scanner, Scam Detector, IP & VPN Detector, and Bulk Batch Checker).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{CAULIFLARE_API_KEY}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://cauliflare-backend.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "CAULIFLARE_API_KEY",
+      "value": "cf_sarwar_cauliflare_live_x829a47f01b92c81d",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Disposable Email Detection",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@mailinator.com\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/v1/check-email",
+          "host": ["{{BASE_URL}}"],
+          "path": ["v1", "check-email"]
+        },
+        "description": "Verifies if an email address belongs to a disposable, temporary, or burner provider across 74,697+ synced domains."
+      }
+    },
+    {
+      "name": "2. Phishing URL Scanner",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://bit.ly/login-verify-account\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/v1/scan-url",
+          "host": ["{{BASE_URL}}"],
+          "path": ["v1", "scan-url"]
+        },
+        "description": "Analyzes URLs and redirect chains for phishing, malware, and credential harvesting patterns in <10ms."
+      }
+    },
+    {
+      "name": "3. Scam & Fraud Text Detector",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Your bank account is locked! Send OTP urgently to claim prize.\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/v1/detect-scam",
+          "host": ["{{BASE_URL}}"],
+          "path": ["v1", "detect-scam"]
+        },
+        "description": "Scans SMS, message, and form submissions for social engineering, urgency patterns, and OTP wire fraud."
+      }
+    },
+    {
+      "name": "4. IP Reputation & VPN / Proxy Detector",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ip\": \"185.220.101.5\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/v1/check-ip",
+          "host": ["{{BASE_URL}}"],
+          "path": ["v1", "check-ip"]
+        },
+        "description": "Detects Datacenter hosting ASNs, Tor exit relays, VPN endpoints, and public proxies in real time."
+      }
+    },
+    {
+      "name": "5. Bulk Batch Email Scanner",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emails\": [\n    \"user@mailinator.com\",\n    \"alex@gmail.com\",\n    \"bot@temp-mail.org\",\n    \"sarwar@cauliflare.in\"\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/v1/batch-check-email",
+          "host": ["{{BASE_URL}}"],
+          "path": ["v1", "batch-check-email"]
+        },
+        "description": "Scans up to 1,000 emails concurrently in a single fast API payload for batch database cleaning."
+      }
+    },
+    {
+      "name": "6. Live Threat Metrics",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{BASE_URL}}/api/metrics",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "metrics"]
+        },
+        "description": "Retrieves real-time global signature count, uptime, and request throughput statistics."
+      }
+    }
+  ]
+}

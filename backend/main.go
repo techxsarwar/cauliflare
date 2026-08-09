@@ -44,6 +44,20 @@ func setupRoutes() http.Handler {
 	mux.HandleFunc("/v1/search", handleSearch)
 	mux.HandleFunc("/search", handleSearch)
 
+	// IP Threat & VPN Detector
+	mux.HandleFunc("/api/check-ip", handleCheckIP)
+	mux.HandleFunc("/v1/check-ip", handleCheckIP)
+	mux.HandleFunc("/check-ip", handleCheckIP)
+
+	// Bulk Batch Email Checker
+	mux.HandleFunc("/api/batch-check-email", handleBatchCheckEmail)
+	mux.HandleFunc("/v1/batch-check-email", handleBatchCheckEmail)
+	mux.HandleFunc("/batch-check-email", handleBatchCheckEmail)
+
+	// Webhook Test Dispatcher
+	mux.HandleFunc("/api/webhook/test", handleTestWebhook)
+	mux.HandleFunc("/v1/webhook/test", handleTestWebhook)
+
 	// Real-time Logs & Threat Registry APIs
 	mux.HandleFunc("/api/logs", handleLogs)
 	mux.HandleFunc("/api/threats", handleThreats)

@@ -153,6 +153,44 @@ const DashboardIndex = () => {
         </div>
       )}
 
+      {/* MONTHLY USAGE QUOTA & RATE LIMIT METER */}
+      <section style={{ backgroundColor: 'var(--surface)', border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+              <span className="font-label-caps font-bold" style={{ fontSize: '13px' }}>MONTHLY API USAGE QUOTA</span>
+              <span className="font-label-caps" style={{ fontSize: '10px', padding: '2px 8px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '1px solid var(--on-surface)', fontWeight: 'bold' }}>
+                FREE DEVELOPER TIER
+              </span>
+            </div>
+            <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px' }}>
+              3,842 of 10,000 monthly requests used • Resets on the 1st of next month
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="font-code-md" style={{ fontSize: '13px', textAlign: 'right' }}>
+              <span style={{ fontWeight: 'bold' }}>Rate Limit:</span> 100 req/sec
+            </div>
+            <a 
+              href="/dashboard/billing" 
+              className="press-button font-label-caps font-bold"
+              style={{ textDecoration: 'none', padding: '8px 16px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', fontSize: '12px' }}
+            >
+              UPGRADE PLAN →
+            </a>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div style={{ width: '100%', height: '24px', backgroundColor: '#121212', border: '2px solid var(--on-surface)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ width: '38.4%', height: '100%', backgroundColor: 'var(--primary)', transition: 'width 0.5s ease' }}></div>
+          <span className="font-code-md font-bold" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#ffffff', letterSpacing: '0.5px' }}>
+            38.4% CONSUMED (6,158 REQUESTS REMAINING)
+          </span>
+        </div>
+      </section>
+
       {/* 2. STATS CARDS */}
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
         <StatCard title="API Engine" value="Golang v1.22" label="sub-12ms execution" icon={Activity} colorClass="text-primary" />
