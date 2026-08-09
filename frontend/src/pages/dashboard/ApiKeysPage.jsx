@@ -1,11 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useUser } from '@clerk/react';
 import { Key, Plus, Trash2, Copy, RefreshCw, Check, X, ShieldCheck } from 'lucide-react';
 
 const ApiKeysPage = () => {
-  const [keys, setKeys] = useState([
-    { id: 1, name: 'Sarwar - Production Key', keyString: 'cf_sarwar_live_x829a47f01b92c81d', created: 'May 1, 2026', lastUsed: '2m ago', env: 'Production' },
-    { id: 2, name: 'Sarwar - Staging Key', keyString: 'cf_sarwar_test_b9102c38d49a71f02', created: 'May 15, 2026', lastUsed: 'Never', env: 'Staging' }
-  ]);
+  const { user } = useUser();
+  const userId = user?.id || 'dev_user';
+  const userName = user?.firstName || user?.username || 'Developer';
+  const storageKey = `cauliflare_user_keys_${userId}`;
+
+  // Initialize keys from per-user localStorage or create a personalized default key
+  const [keys, setKeys] = useState(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    
+    // Default initial key personalized to the authenticated user
+    const randomHex1 = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    const userSlug = (user?.firstName || 'live').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return [
+      {
+        id: 1,
+        name: `${userName} - Production Key`,
+        keyString: `cf_${userSlug}_live_${randomHex1}`,
+        created: 'Today',
+        lastUsed: 'Just now',
+        env: 'Production'
+      }
+    ];
+  });
+
+  // Whenever keys or user change, persist to that user's localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setKeys(JSON.parse(saved));
+      } else {
+        const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        const userSlug = (user?.firstName || 'live').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const initialKeys = [
+          {
+            id: 1,
+            name: `${userName} - Production Key`,
+            keyString: `cf_${userSlug}_live_${randomHex}`,
+            created: 'Today',
+            lastUsed: 'Just now',
+            env: 'Production'
+          }
+        ];
+        setKeys(initialKeys);
+        localStorage.setItem(storageKey, JSON.stringify(initialKeys));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [userId, userName]);
+
+  const saveKeys = (newKeys) => {
+    setKeys(newKeys);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newKeys));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [keyNameInput, setKeyNameInput] = useState('');
@@ -28,16 +91,19 @@ const ApiKeysPage = () => {
 
   const handleRotate = (id, name) => {
     const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') ? 'cf_sarwar_test_' : 'cf_sarwar_live_';
+    const userSlug = (user?.firstName || 'key').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const prefix = name.toLowerCase().includes('staging') || name.toLowerCase().includes('test') ? `cf_${userSlug}_test_` : `cf_${userSlug}_live_`;
     const updatedString = prefix + randomHex;
 
-    setKeys(keys.map(k => k.id === id ? { ...k, keyString: updatedString, created: 'Just now' } : k));
+    const updated = keys.map(k => k.id === id ? { ...k, keyString: updatedString, created: 'Just now' } : k);
+    saveKeys(updated);
     showToast(`Rotated API key for "${name}"!`);
   };
 
   const handleDelete = (id, name) => {
     if (window.confirm(`Are you sure you want to revoke and delete "${name}"?`)) {
-      setKeys(keys.filter(k => k.id !== id));
+      const updated = keys.filter(k => k.id !== id);
+      saveKeys(updated);
       showToast(`Revoked API key "${name}"`);
     }
   };
@@ -46,7 +112,8 @@ const ApiKeysPage = () => {
     e.preventDefault();
     if (!keyNameInput.trim()) return;
 
-    const prefix = keyEnvInput === 'Staging' ? 'cf_sarwar_test_' : keyEnvInput === 'Development' ? 'cf_sarwar_dev_' : 'cf_sarwar_live_';
+    const userSlug = (user?.firstName || 'key').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const prefix = keyEnvInput === 'Staging' ? `cf_${userSlug}_test_` : keyEnvInput === 'Development' ? `cf_${userSlug}_dev_` : `cf_${userSlug}_live_`;
     const randomHex = Array.from({ length: 18 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
     const fullKey = prefix + randomHex;
 
@@ -59,7 +126,7 @@ const ApiKeysPage = () => {
       env: keyEnvInput
     };
 
-    setKeys([newKeyObj, ...keys]);
+    saveKeys([newKeyObj, ...keys]);
     setNewlyCreatedKey(fullKey);
     showToast(`Created API Key "${keyNameInput}"!`);
     setKeyNameInput('');
@@ -222,7 +289,9 @@ const ApiKeysPage = () => {
       <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 className="font-display-xl" style={{ fontSize: '32px', marginBottom: '8px' }}>API Keys</h1>
-          <p className="font-body-lg" style={{ color: 'var(--on-surface)', opacity: 0.85, fontWeight: '600' }}>Manage your authentication keys for API access.</p>
+          <p className="font-body-lg" style={{ color: 'var(--on-surface)', opacity: 0.85, fontWeight: '600' }}>
+            Manage authentication keys for <strong>{userName}</strong> ({user?.primaryEmailAddress?.emailAddress || 'User Account'}).
+          </p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
