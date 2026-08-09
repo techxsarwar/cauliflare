@@ -292,6 +292,41 @@ go run .
         </div>
       </section>
 
+      {/* STAR & FOLLOW COMMUNITY COURTESY */}
+      <section style={{ backgroundColor: 'var(--surface-container)', border: '3px solid var(--on-surface)', boxShadow: '6px 6px 0px var(--on-surface)', padding: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffd600', marginBottom: '6px' }}>
+            <span>⭐</span>
+            <span className="font-label-caps font-bold" style={{ color: 'var(--on-surface)', fontSize: '12px' }}>SUPPORT OPEN SOURCE DEVELOPMENT</span>
+          </div>
+          <h3 className="font-headline-md" style={{ fontSize: '20px' }}>Love Cauliflare? Star the Repo & Follow on GitHub</h3>
+          <p className="font-body-md text-on-surface-variant" style={{ fontSize: '13px', marginTop: '4px' }}>
+            If you self-host or use this platform, please consider dropping a Star on GitHub and following Sarwar!
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <a 
+            href="https://github.com/techxsarwar/cauliflare" 
+            target="_blank" 
+            rel="noreferrer"
+            className="glow-button font-label-caps font-bold"
+            style={{ padding: '10px 18px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}
+          >
+            ⭐ STAR REPOSITORY
+          </a>
+          <a 
+            href="https://github.com/techxsarwar" 
+            target="_blank" 
+            rel="noreferrer"
+            className="press-button font-label-caps font-bold"
+            style={{ padding: '10px 18px', backgroundColor: 'var(--surface)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}
+          >
+            👤 FOLLOW @TECHXSARWAR
+          </a>
+        </div>
+      </section>
+
     </div>
   );
 };

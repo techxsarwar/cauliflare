@@ -225,6 +225,41 @@ go run .
         </div>
       </section>
 
+      {/* 4. STAR & FOLLOW COMMUNITY COURTESY */}
+      <section style={{ backgroundColor: 'var(--surface)', border: '3px solid var(--on-surface)', boxShadow: '8px 8px 0px var(--on-surface)', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffd600', marginBottom: '8px' }}>
+            <span style={{ fontSize: '18px' }}>⭐</span>
+            <span className="font-label-caps font-bold" style={{ color: 'var(--on-surface)', fontSize: '13px' }}>SELF-HOSTING COURTESY & OPEN SOURCE LOVE</span>
+          </div>
+          <h3 className="font-headline-md" style={{ fontSize: '22px' }}>Like Cauliflare? Give it a Star on GitHub!</h3>
+          <p className="font-body-md text-on-surface-variant" style={{ fontSize: '14px', marginTop: '4px', maxWidth: '640px' }}>
+            Cauliflare is completely free. If you self-host or use our API in production, please consider starring the GitHub repository and following <strong>Sarwar</strong> to support independent open-source engineering!
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <a 
+            href="https://github.com/techxsarwar/cauliflare" 
+            target="_blank" 
+            rel="noreferrer"
+            className="glow-button font-label-caps font-bold"
+            style={{ padding: '12px 20px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}
+          >
+            ⭐ STAR THE REPOSITORY
+          </a>
+          <a 
+            href="https://github.com/techxsarwar" 
+            target="_blank" 
+            rel="noreferrer"
+            className="press-button font-label-caps font-bold"
+            style={{ padding: '12px 20px', backgroundColor: 'var(--surface-container)', color: 'var(--on-surface)', border: '2px solid var(--on-surface)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}
+          >
+            👤 FOLLOW @TECHXSARWAR
+          </a>
+        </div>
+      </section>
+
     </div>
   );
 };

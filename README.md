@@ -163,6 +163,14 @@ npm run dev
 
 ---
 
+## ⭐ Support & Community Courtesy
+
+If you are self-hosting Cauliflare or find this project helpful, please consider:
+- 🌟 **Starring this repository on GitHub** to help more developers discover it!
+- 👤 **Following [@techxsarwar](https://github.com/techxsarwar)** on GitHub for more open-source security tools.
+
+---
+
 ## 📜 License
 
 Distributed under the **GNU General Public License v3.0 (GPL-3.0)**. Anyone is free to use, modify, and build upon this software provided all derivative works remain **open-source & public** with prominent attribution to **Sarwar**. See [LICENSE](LICENSE) for full details.
