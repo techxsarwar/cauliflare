@@ -81,6 +81,28 @@ const ThreatsPage = () => {
     return matchesCategory && matchesSearch;
   });
 
+  const handleExportCSV = () => {
+    if (!filteredThreats || filteredThreats.length === 0) return;
+    const header = 'ID,Time,Category,Target,Provider,RiskScore,Severity\n';
+    const rows = filteredThreats.map(t => `"${t.id || ''}","${t.time || ''}","${t.category || ''}","${t.target || ''}","${t.provider || ''}","${t.risk_score || ''}","${t.severity || ''}"`).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cauliflare_threat_registry_${Date.now()}.csv`;
+    a.click();
+  };
+
+  const handleExportJSON = () => {
+    if (!filteredThreats || filteredThreats.length === 0) return;
+    const blob = new Blob([JSON.stringify(filteredThreats, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cauliflare_threat_registry_${Date.now()}.json`;
+    a.click();
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
@@ -90,11 +112,25 @@ const ThreatsPage = () => {
           <h1 className="font-display-xl" style={{ fontSize: '32px', marginBottom: '8px' }}>Threat Registry</h1>
           <p className="font-body-lg text-on-surface-variant">Real-time log of blocked temporary emails, malicious URLs, and scam patterns.</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <button 
+            onClick={handleExportCSV} 
+            className="press-button font-label-caps font-bold" 
+            style={{ padding: '8px 14px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', fontSize: '12px' }}
+          >
+            📥 EXPORT CSV
+          </button>
+          <button 
+            onClick={handleExportJSON} 
+            className="press-button font-label-caps font-bold" 
+            style={{ padding: '8px 14px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', fontSize: '12px' }}
+          >
+            📄 JSON
+          </button>
           <button 
             onClick={fetchThreats}
-            className="press-button font-label-caps font-bold"
-            style={{ padding: '8px 16px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
+            className="glow-button font-label-caps font-bold"
+            style={{ padding: '8px 16px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
           >
             <RefreshCw size={14} className={loading ? 'spin' : ''} /> REFRESH
           </button>

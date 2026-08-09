@@ -66,20 +66,58 @@ const LogsPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleExportCSV = () => {
+    if (!logs || logs.length === 0) return;
+    const header = 'ID,Time,Endpoint,Status,Latency,RiskScore\n';
+    const rows = logs.map(l => `"${l.id || ''}","${l.time || ''}","${l.endpoint || ''}","${l.status || ''}","${l.latency || ''}","${l.risk_score || ''}"`).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cauliflare_audit_logs_${Date.now()}.csv`;
+    a.click();
+  };
+
+  const handleExportJSON = () => {
+    if (!logs || logs.length === 0) return;
+    const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cauliflare_audit_logs_${Date.now()}.json`;
+    a.click();
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 className="font-display-xl" style={{ fontSize: '32px', marginBottom: '8px' }}>Request Logs</h1>
           <p className="font-body-lg text-on-surface-variant">Live audit trail of all real-time API requests and threat analysis.</p>
         </div>
-        <button 
-          onClick={fetchLogs} 
-          className="press-button font-label-caps font-bold" 
-          style={{ padding: '8px 16px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <RefreshCw size={14} className={loading ? 'spin' : ''} /> REFRESH LOGS
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={handleExportCSV} 
+            className="press-button font-label-caps font-bold" 
+            style={{ padding: '8px 14px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', fontSize: '12px' }}
+          >
+            📥 EXPORT CSV
+          </button>
+          <button 
+            onClick={handleExportJSON} 
+            className="press-button font-label-caps font-bold" 
+            style={{ padding: '8px 14px', backgroundColor: 'var(--surface-container)', border: '2px solid var(--on-surface)', cursor: 'pointer', fontSize: '12px' }}
+          >
+            📄 JSON
+          </button>
+          <button 
+            onClick={fetchLogs} 
+            className="glow-button font-label-caps font-bold" 
+            style={{ padding: '8px 16px', backgroundColor: 'var(--primary)', color: '#ffffff', border: '2px solid var(--on-surface)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}
+          >
+            <RefreshCw size={14} className={loading ? 'spin' : ''} /> REFRESH
+          </button>
+        </div>
       </section>
 
       <section style={{ border: '2px solid var(--on-surface)', boxShadow: '8px 8px 0px var(--on-surface)', backgroundColor: 'var(--surface-container)', overflow: 'hidden' }}>

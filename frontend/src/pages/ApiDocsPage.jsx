@@ -315,7 +315,7 @@ def verify_user_signup(email):
             </div>
 
             <h3 className="font-label-caps font-bold" style={{ marginBottom: '8px' }}>Node.js / Express Middleware</h3>
-            <div style={{ backgroundColor: '#121212', color: '#fff', padding: '16px', border: '2px solid var(--on-surface)', overflowX: 'auto' }} className="font-code-md">
+            <div style={{ backgroundColor: '#121212', color: '#fff', padding: '16px', border: '2px solid var(--on-surface)', marginBottom: '24px', overflowX: 'auto' }} className="font-code-md">
               <pre>{`async function cauliflareGuard(req, res, next) {
   const { email } = req.body;
   const check = await fetch("https://cauliflare-backend.onrender.com/v1/check-email", {
@@ -328,9 +328,46 @@ def verify_user_signup(email):
   }).then(r => r.json());
 
   if (check.recommendation === "BLOCK") {
-    return res.status(400).json({ error: "Disposable email not allowed." });
+    return res.status(400).json({ error: "Disposable burner email not permitted." });
   }
   next();
+}`}</pre>
+            </div>
+
+            <h3 className="font-label-caps font-bold" style={{ marginBottom: '8px' }}>PHP / Laravel Validator</h3>
+            <div style={{ backgroundColor: '#121212', color: '#fff', padding: '16px', border: '2px solid var(--on-surface)', marginBottom: '24px', overflowX: 'auto' }} className="font-code-md">
+              <pre>{`use Illuminate\\Support\\Facades\\Http;
+
+$response = Http::withToken('cf_sarwar_cauliflare_live_x829a47f01b92c81d')
+    ->post('https://cauliflare-backend.onrender.com/v1/check-email', [
+        'email' => $request->input('email')
+    ]);
+
+if ($response->json('recommendation') === 'BLOCK') {
+    return back()->withErrors(['email' => 'Disposable email addresses are not permitted.']);
+}`}</pre>
+            </div>
+
+            <h3 className="font-label-caps font-bold" style={{ marginBottom: '8px' }}>Rust (Reqwest / Tokio)</h3>
+            <div style={{ backgroundColor: '#121212', color: '#fff', padding: '16px', border: '2px solid var(--on-surface)', overflowX: 'auto' }} className="font-code-md">
+              <pre>{`use reqwest::Client;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::new();
+    let res = client.post("https://cauliflare-backend.onrender.com/v1/check-email")
+        .bearer_auth("cf_sarwar_cauliflare_live_x829a47f01b92c81d")
+        .json(&json!({ "email": "user@mailinator.com" }))
+        .send()
+        .await?
+        .json::<serde_json::Value>()
+        .await?;
+
+    if res["recommendation"] == "BLOCK" {
+        println!("Blocked burner mail: {}", res["provider"]);
+    }
+    Ok(())
 }`}</pre>
             </div>
           </div>
